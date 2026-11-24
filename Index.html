@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krillion Clone — Daily Dive</title>
+  <style>
+    :root {
+      --bg: #071b26;
+      --card: #0e2d3f;
+      --text: #eef8ff;
+      --accent: #38bdf8;
+      --muted: #8fb6cc;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(180deg, #0b293a 0%, #041018 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+    .app {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .prompt {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0.75rem 0 1.25rem;
+    }
+    form {
+      display: flex;
+      gap: 0.5rem;
+    }
+    input {
+      flex: 1;
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #071b26;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.75rem 1.1rem;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #041018;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .feedback {
+      margin-top: 1rem;
+      min-height: 2.5rem;
+      line-height: 1.4;
+      color: #bae6fd;
+    }
+    .summary {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hud">
+      <span id="round-info">Round 1 / 7</span>
+      <span id="timer-info">Time: 25s</span>
+      <span id="depth-info">Depth: 0m</span>
+    </div>
+
+    <div id="game-view">
+      <div class="prompt" id="prompt-text">Loading...</div>
+      <form id="answer-form">
+        <input id="answer-input" type="text" autocomplete="off" placeholder="Type a valid (and rare!) answer..." required />
+        <button type="submit">Dive</button>
+      </form>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="summary" id="summary" hidden></div>
+  </div>
+
+  <script>
+    // Map normalized answers -> rarity weight (lower = rarer = deeper dive)
+    // In a real multiplayer app, you'd compute counts from real player submissions on a backend.
+    const PROMPTS = [
+      {
+        q: "Name a fruit that starts with B",
+        answers: {
+          "banana": 0.90,
+          "blueberry": 0.65,
+          "blackberry": 0.55,
+          "boysenberry": 0.15,
+          "breadfruit": 0.08,
+          "buddha's hand": 0.03
+        }
+      },
+      {
+        q: "Name a planet in our solar system",
+        answers: {
+          "mars": 0.92,
+          "earth": 0.90,
+          "jupiter": 0.85,
+          "saturn": 0.80,
+          "venus": 0.75,
+          "mercury": 0.70,
+          "uranus": 0.60,
+          "neptune": 0.58
+        }
+      },
+      {
+        q: "Name a programming language",
+        answers: {
+          "python": 0.90,
+          "javascript": 0.88,
+          "java": 0.82,
+          "c++": 0.70,
+          "rust": 0.40,
+          "haskell": 0.14,
+          "erlang": 0.09,
+          "brainfuck": 0.04
+        }
+      },
+      {
+        q: "Name a country in South America",
+        answers: {
+          "brazil": 0.92,
+          "argentina": 0.80,
+          "chile": 0.65,
+          "peru": 0.62,
+          "colombia": 0.60,
+          "uruguay": 0.25,
+          "suriname": 0.07,
+          "guyana": 0.08
+        }
+      },
+      {
+        q: "Name a musical instrument with strings",
+        answers: {
+          "guitar": 0.92,
+          "violin": 0.82,
+          "piano": 0.80,
+          "cello": 0.50,
+          "harp": 0.35,
+          "banjo": 0.28,
+          "sitar": 0.10,
+          "hurdy gurdy": 0.03
+        }
+      },
+      {
+        q: "Name a geometric shape (2D)",
+        answers: {
+          "circle": 0.90,
+          "square": 0.88,
+          "triangle": 0.86,
+          "hexagon": 0.45,
+          "octagon": 0.40,
+          "rhombus": 0.22,
+          "dodecagon": 0.05
+        }
+      },
+      {
+        q: "Name a type of cloud",
+        answers: {
+          "cumulus": 0.80,
+          "cirrus": 0.65,
+          "stratus": 0.60,
+          "cumulonimbus": 0.35,
+          "altocumulus": 0.18,
+          "nimbostratus": 0.14,
+          "mammatus": 0.05
+        }
+      }
+    ];
+
+    const ROUND_SECONDS = 25;
+    let roundIndex = 0;
+    let totalPoints = 0;
+    let timeLeft = ROUND_SECONDS;
+    let timerId = null;
+    const history = [];
+
+    const roundInfo = document.getElementById("round-info");
+    const timerInfo = document.getElementById("timer-info");
+    const depthInfo = document.getElementById("depth-info");
+    const promptText = document.getElementById("prompt-text");
+    const form = document.getElementById("answer-form");
+    const input = document.getElementById("answer-input");
+    const feedback = document.getElementById("feedback");
+    const summary = document.getElementById("summary");
+    const gameView = document.getElementById("game-view");
+
+    const normalize = (str) =>
+      str.trim().toLowerCase().replace(/\s+/g, " ");
+
+    function scoreRarity(popularity) {
+      // popularity is in (0, 1]; rarer (lower popularity) gives higher points (10 to 100)
+      const rarity = Math.max(0.05, 1 - popularity);
+      return Math.round(rarity * 100);
+    }
+
+    function startRound() {
+      if (roundIndex >= PROMPTS.length) {
+        endDive();
+        return;
+      }
+
+      const current = PROMPTS[roundIndex];
+      roundInfo.textContent = `Round ${roundIndex + 1} / ${PROMPTS.length}`;
+      promptText.textContent = current.q;
+      input.value = "";
+      input.disabled = false;
+      input.focus();
+
+      timeLeft = ROUND_SECONDS;
+      timerInfo.textContent = `Time: ${timeLeft}s`;
+
+      clearInterval(timerId);
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        timerInfo.textContent = `Time: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          submitAnswer("", true);
+        }
+      }, 1000);
+    }
+
+    function submitAnswer(rawAnswer, timedOut = false) {
+      clearInterval(timerId);
+      input.disabled = true;
+
+      const current = PROMPTS[roundIndex];
+      const norm = normalize(rawAnswer);
+      let pts = 0;
+      let status = "";
+
+      if (timedOut) {
+        status = "Time's up! 0 pts.";
+      } else if (Object.prototype.hasOwnProperty.call(current.answers, norm)) {
+        const pop = current.answers[norm];
+        pts = scoreRarity(pop);
+        const tier = pts >= 85 ? "One in a Krillion!" : pts >= 55 ? "Deep Cut" : pts >= 30 ? "Rare" : "Common";
+        status = `Accepted ("${rawAnswer.trim()}") — ${tier} (+${pts} pts, +${pts * 10}m)`;
+      } else {
+        status = `Not in answer list ("${rawAnswer.trim()}") — 0 pts.`;
+      }
+
+      totalPoints += pts;
+      depthInfo.textContent = `Depth: ${totalPoints * 10}m`;
+      feedback.textContent = status;
+      history.push({ q: current.q, answer: rawAnswer.trim() || "—", pts });
+
+      roundIndex += 1;
+      setTimeout(startRound, 1400);
+    }
+
+    function endDive() {
+      gameView.hidden = true;
+      summary.hidden = false;
+      const depth = totalPoints * 10;
+      const items = history
+        .map((h) => `<li><strong>${h.q}</strong>: ${h.answer} (<em>+${h.pts} pts</em>)</li>`)
+        .join("");
+      summary.innerHTML = `
+        <h2>Dive Complete!</h2>
+        <p>Total Score: <strong>${totalPoints} pts</strong> | Max Depth: <strong>${depth}m</strong></p>
+        <ul>${items}</ul>
+        <button onclick="location.reload()">Dive Again</button>
+      `;
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitAnswer(input.value, false);
+    });
+
+    startRound();
+  </script>
+</body>
+</html>
