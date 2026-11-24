@@ -33,7 +33,6 @@
       background-position: 0% 0%;
     }
 
-    /* Rising ambient bubbles */
     .bubbles {
       position: fixed;
       inset: 0;
@@ -67,7 +66,6 @@
       align-items: stretch;
     }
 
-    /* Vertical Ocean Depth Track */
     .depth-track {
       position: relative;
       background: linear-gradient(180deg, rgba(14,116,144,0.35) 0%, rgba(8,47,73,0.65) 55%, rgba(2,6,23,0.92) 100%);
@@ -220,6 +218,10 @@
       font-size: 0.95rem;
       cursor: pointer;
     }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
     button.secondary {
       background: var(--card-2);
       color: var(--text);
@@ -287,7 +289,7 @@
         <div class="prompt" id="prompt-text">Generating prompts...</div>
         <form id="answer-form">
           <input id="answer-input" type="text" autocomplete="off" placeholder="Type a valid & rare answer..." required />
-          <button type="submit">Dive</button>
+          <button type="submit" id="submit-btn">Dive</button>
         </form>
         <div class="feedback" id="feedback"></div>
       </div>
@@ -297,7 +299,6 @@
   </div>
 
   <script>
-    // Spawn subtle rising bubbles
     (function createBubbles() {
       const container = document.getElementById("bubbles");
       for (let i = 0; i < 18; i++) {
@@ -313,7 +314,6 @@
       }
     })();
 
-    // Master item banks: [name, popularityWeight (0.02 = very rare, 0.95 = super common)]
     const BANKS = {
       Country: [
         ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
@@ -405,289 +405,3 @@
         ["Shield", 0.70], ["Sword", 0.74], ["Helmet", 0.72], ["Prism", 0.46], ["Pendulum", 0.36],
         ["Kaleidoscope", 0.32], ["Hourglass", 0.48], ["Sundial", 0.34], ["Sextant", 0.16], ["Astrolabe", 0.14],
         ["Chess", 0.82], ["Origami", 0.56], ["Sculpture", 0.62], ["Mosaic", 0.44], ["Fresco", 0.28],
-        ["Sonnet", 0.40], ["Haiku", 0.52], ["Ballad", 0.38], ["Fable", 0.44], ["Myth", 0.64]
-      ]
-    };
-
-    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-    function generatePromptBank() {
-      const prompts = [];
-      const seen = new Set();
-
-      const addPrompt = (category, question, items) => {
-        if (!items || items.length < 2) return;
-        const key = `${category}|${question}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-
-        const answers = {};
-        for (const [name, pop] of items) {
-          const clean = name.trim().toLowerCase().replace(/\s+/g, " ");
-          answers[clean] = pop;
-        }
-        prompts.push({ category, question, answers });
-      };
-
-      for (const [category, list] of Object.entries(BANKS)) {
-        for (const letter of ALPHABET) {
-          const matches = list.filter(([n]) => n.trim().toUpperCase().startsWith(letter));
-          addPrompt(category, `Name a ${category.toLowerCase()} starting with "${letter}"`, matches);
-        }
-        for (const letter of ALPHABET) {
-          const matches = list.filter(([n]) => {
-            const wordOnly = n.trim().replace(/[^a-zA-Z]/g, "");
-            return wordOnly.toUpperCase().endsWith(letter);
-          });
-          addPrompt(category, `Name a ${category.toLowerCase()} ending with "${letter}"`, matches);
-        }
-        for (let len = 3; len <= 12; len++) {
-          const matches = list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len);
-          addPrompt(category, `Name a ${category.toLowerCase()} with ${len} letters`, matches);
-        }
-        for (const minLen of [6, 8, 10]) {
-          const matches = list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length >= minLen);
-          addPrompt(category, `Name a ${category.toLowerCase()} with at least ${minLen} letters`, matches);
-        }
-        const doubleLetterItems = list.filter(([n]) => /([a-zA-Z])\1/i.test(n));
-        addPrompt(category, `Name a ${category.toLowerCase()} containing double letters`, doubleLetterItems);
-
-        const singleWordItems = list.filter(([n]) => n.trim().split(/\s+/).length === 1);
-        addPrompt(category, `Name a single-word ${category.toLowerCase()}`, singleWordItems);
-
-        const multiWordItems = list.filter(([n]) => n.trim().split(/\s+/).length >= 2);
-        addPrompt(category, `Name a two-or-more-word ${category.toLowerCase()}`, multiWordItems);
-
-        const rareItems = list.filter(([, pop]) => pop <= 0.35);
-        addPrompt(category, `Name a lesser-known ${category.toLowerCase()}`, rareItems);
-
-        const commonItems = list.filter(([, pop]) => pop >= 0.70);
-        addPrompt(category, `Name a well-known ${category.toLowerCase()}`, commonItems);
-      }
-
-      const allItems = Object.entries(BANKS).flatMap(([cat, arr]) =>
-        arr.map(([name, pop]) => [name, pop, cat])
-      );
-
-      for (const letter of ALPHABET) {
-        const matches = allItems
-          .filter(([n]) => n.trim().toUpperCase().startsWith(letter))
-          .map(([n, pop]) => [n, pop]);
-        addPrompt("Any Category", `Name anything starting with "${letter}"`, matches);
-      }
-
-      for (let len = 4; len <= 11; len++) {
-        const matches = allItems
-          .filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len)
-          .map(([n, pop]) => [n, pop]);
-        addPrompt("Any Category", `Name anything with ${len} letters`, matches);
-      }
-
-      for (const letter of ALPHABET) {
-        for (const minLen of [4, 5, 6, 7]) {
-          const matches = allItems
-            .filter(([n]) =>
-              n.trim().toUpperCase().startsWith(letter) &&
-              n.replace(/[^a-zA-Z]/g, "").length >= minLen
-            )
-            .map(([n, pop]) => [n, pop]);
-          addPrompt("Word Challenge", `Starts with "${letter}" and has ${minLen}+ letters`, matches);
-        }
-      }
-
-      return prompts;
-    }
-
-    const ALL_PROMPTS = generatePromptBank();
-    document.getElementById("bank-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()}`;
-
-    function hashString(str) {
-      let h = 2166136261;
-      for (let i = 0; i < str.length; i++) {
-        h ^= str.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return h >>> 0;
-    }
-
-    function pickSeededSeven(seedStr) {
-      let seed = hashString(seedStr) || 1;
-      const pool = [...ALL_PROMPTS];
-      const chosen = [];
-      while (chosen.length < 7 && pool.length > 0) {
-        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-        const idx = seed % pool.length;
-        chosen.push(pool.splice(idx, 1)[0]);
-      }
-      return chosen;
-    }
-
-    const ROUND_SECONDS = 25;
-    const MAX_EXPECTED_DEPTH = 4500; // Scales visual sink depth smoothly
-    let activePrompts = [];
-    let roundIndex = 0;
-    let totalPoints = 0;
-    let timeLeft = ROUND_SECONDS;
-    let timerId = null;
-    let history = [];
-
-    const modeBadge = document.getElementById("mode-badge");
-    const roundInfo = document.getElementById("round-info");
-    const timerInfo = document.getElementById("timer-info");
-    const depthInfo = document.getElementById("depth-info");
-    const categoryInfo = document.getElementById("category-info");
-    const promptText = document.getElementById("prompt-text");
-    const form = document.getElementById("answer-form");
-    const input = document.getElementById("answer-input");
-    const feedback = document.getElementById("feedback");
-    const summary = document.getElementById("summary");
-    const gameView = document.getElementById("game-view");
-    const diver = document.getElementById("diver");
-    const appCard = document.getElementById("app-card");
-    const trackEl = document.querySelector(".depth-track");
-
-    const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, " ");
-
-    function findMatch(answers, raw) {
-      const norm = normalize(raw);
-      if (!norm) return null;
-      if (Object.prototype.hasOwnProperty.call(answers, norm)) {
-        return { matched: norm, pop: answers[norm] };
-      }
-      const alt = norm.endsWith("s") ? norm.slice(0, -1) : `${norm}s`;
-      if (Object.prototype.hasOwnProperty.call(answers, alt)) {
-        return { matched: alt, pop: Math.min(0.95, answers[alt] + 0.05) };
-      }
-      return null;
-    }
-
-    function updateSinkAnimation(depthMeters, didSink) {
-      const ratio = Math.min(1, depthMeters / MAX_EXPECTED_DEPTH);
-
-      // Darken ocean backdrop as depth increases
-      const bgPos = Math.round(ratio * 100);
-      document.body.style.backgroundPosition = `0% ${bgPos}%`;
-
-      // Move diver down the vertical track
-      const trackHeight = trackEl ? trackEl.clientHeight : 410;
-      const topMin = 34;
-      const topMax = Math.max(topMin + 20, trackHeight - 58);
-      const diverTop = topMin + ratio * (topMax - topMin);
-      diver.style.top = `${diverTop}px`;
-
-      // Pop depth counter & trigger sink pulse on card/diver
-      depthInfo.textContent = `${depthMeters.toLocaleString()}m`;
-      depthInfo.classList.remove("pop");
-      void depthInfo.offsetWidth;
-      depthInfo.classList.add("pop");
-
-      if (didSink) {
-        diver.classList.add("sinking");
-        appCard.classList.remove("sink-pulse");
-        void appCard.offsetWidth;
-        appCard.classList.add("sink-pulse");
-        setTimeout(() => diver.classList.remove("sinking"), 1150);
-      }
-    }
-
-    function startSession(mode = "daily") {
-      clearInterval(timerId);
-      const todayUtc = new Date().toISOString().slice(0, 10);
-      const seed = mode === "daily" ? `daily-${todayUtc}` : `rand-${Date.now()}-${Math.random()}`;
-      modeBadge.textContent = mode === "daily" ? `Daily Dive (${todayUtc})` : "Random Dive";
-
-      activePrompts = pickSeededSeven(seed);
-      roundIndex = 0;
-      totalPoints = 0;
-      history = [];
-      feedback.textContent = "";
-      summary.hidden = true;
-      gameView.hidden = false;
-      updateSinkAnimation(0, false);
-      startRound();
-    }
-
-    function startRound() {
-      if (roundIndex >= activePrompts.length) {
-        endDive();
-        return;
-      }
-      const cur = activePrompts[roundIndex];
-      roundInfo.textContent = `${roundIndex + 1} / ${activePrompts.length}`;
-      categoryInfo.textContent = cur.category;
-      promptText.textContent = cur.question;
-      input.value = "";
-      input.disabled = false;
-      input.focus();
-
-      timeLeft = ROUND_SECONDS;
-      timerInfo.textContent = `${timeLeft}s`;
-      clearInterval(timerId);
-      timerId = setInterval(() => {
-        timeLeft -= 1;
-        timerInfo.textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(timerId);
-          submitAnswer("", true);
-        }
-      }, 1000);
-    }
-
-    function submitAnswer(rawAnswer, timedOut = false) {
-      clearInterval(timerId);
-      input.disabled = true;
-
-      const cur = activePrompts[roundIndex];
-      const cleaned = rawAnswer.trim();
-      let pts = 0;
-
-      if (timedOut) {
-        feedback.innerHTML = `<span class="bad">Time's up! +0 pts</span>`;
-      } else {
-        const hit = findMatch(cur.answers, cleaned);
-        if (hit) {
-          pts = Math.max(5, Math.round((1 - hit.pop) * 100));
-          const tier = pts >= 80 ? "One in a Krillion!" : pts >= 55 ? "Deep Cut" : pts >= 30 ? "Rare" : "Common";
-          const cls = pts >= 55 ? "ok" : "warn";
-          feedback.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong> → ${tier} (+${pts} pts, sinking +${pts * 10}m...)</span>`;
-        } else {
-          feedback.innerHTML = `<span class="bad">"${cleaned}" isn't in this prompt's list (+0 pts)</span>`;
-        }
-      }
-
-      totalPoints += pts;
-      updateSinkAnimation(totalPoints * 10, pts > 0);
-      history.push({ q: cur.question, ans: cleaned || "—", pts });
-
-      roundIndex += 1;
-      setTimeout(startRound, 1450);
-    }
-
-    function endDive() {
-      gameView.hidden = true;
-      summary.hidden = false;
-      const depth = totalPoints * 10;
-      const rows = history
-        .map((h) => `<li>${h.q} — <strong>${h.ans}</strong> (<em>+${h.pts} pts</em>)</li>`)
-        .join("");
-
-      summary.innerHTML = `
-        <h2>Dive Complete!</h2>
-        <p>Score: <strong>${totalPoints} pts</strong> · Max Depth: <strong>${depth.toLocaleString()}m</strong></p>
-        <ul>${rows}</ul>
-        <div class="summary-actions">
-          <button onclick="startSession('random')">Play Another 7 (Random)</button>
-          <button class="secondary" onclick="startSession('daily')">Replay Today's Daily</button>
-        </div>
-      `;
-    }
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      submitAnswer(input.value, false);
-    });
-
-    startSession("daily");
-  </script>
-</body>
-</html>
