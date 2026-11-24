@@ -3,45 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Krillion Clone — Daily Dive</title>
+  <title>Krillion Dive — 1,000+ Prompts</title>
   <style>
     :root {
       --bg: #071b26;
-      --card: #0e2d3f;
+      --card: rgba(14, 45, 63, 0.88);
+      --card-2: rgba(9, 32, 46, 0.9);
       --text: #eef8ff;
       --accent: #38bdf8;
-      --muted: #8fb6cc;
+      --accent-2: #22d3ee;
+      --muted: #9ec5db;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --bad: #f87171;
     }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(180deg, #0b293a 0%, #041018 100%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       min-height: 100vh;
       display: grid;
       place-items: center;
       padding: 1rem;
+      overflow-x: hidden;
+      background: linear-gradient(180deg, #0e4a6e 0%, #072638 45%, #03111a 80%, #01060a 100%);
+      transition: background-position 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
+      background-size: 100% 260%;
+      background-position: 0% 0%;
     }
+
+    /* Rising ambient bubbles */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -30px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(56,189,248,0.12));
+      border: 1px solid rgba(255,255,255,0.22);
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) translateX(0) scale(0.9); opacity: 0; }
+      15% { opacity: 0.75; }
+      85% { opacity: 0.55; }
+      100% { transform: translateY(-110vh) translateX(18px) scale(1.1); opacity: 0; }
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 700px;
+      display: grid;
+      grid-template-columns: 68px 1fr;
+      gap: 0.85rem;
+      align-items: stretch;
+    }
+
+    /* Vertical Ocean Depth Track */
+    .depth-track {
+      position: relative;
+      background: linear-gradient(180deg, rgba(14,116,144,0.35) 0%, rgba(8,47,73,0.65) 55%, rgba(2,6,23,0.92) 100%);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 0.75rem 0.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 410px;
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.45);
+    }
+    .zone-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      opacity: 0.8;
+    }
+    .rail {
+      position: absolute;
+      top: 42px;
+      bottom: 42px;
+      left: 50%;
+      width: 3px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.14);
+      border-radius: 999px;
+    }
+    .diver {
+      position: absolute;
+      top: 34px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      font-size: 1.45rem;
+      line-height: 1;
+      transition: top 1.15s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s ease;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
+      z-index: 2;
+    }
+    .diver.sinking {
+      transform: translate(-50%, 4px) scale(1.12);
+    }
+
     .app {
       width: 100%;
-      max-width: 560px;
       background: var(--card);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
       padding: 1.5rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .hud {
+    .app.sink-pulse {
+      animation: cardSink 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes cardSink {
+      0% { transform: translateY(0); }
+      35% { transform: translateY(12px); }
+      100% { transform: translateY(0); }
+    }
+
+    .top-bar {
       display: flex;
       justify-content: space-between;
-      font-size: 0.95rem;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+      font-size: 0.85rem;
       color: var(--muted);
-      margin-bottom: 1rem;
+    }
+    .badge {
+      background: var(--card-2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+    }
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+    .stat {
+      background: var(--card-2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 0.6rem 0.75rem;
+      text-align: center;
+    }
+    .stat .label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .stat .val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-top: 0.15rem;
+      display: inline-block;
+      transition: transform 0.35s ease, color 0.35s ease;
+    }
+    .stat .val.pop {
+      transform: scale(1.22);
+      color: var(--accent-2);
+    }
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-2);
+      font-weight: 700;
     }
     .prompt {
       font-size: 1.35rem;
       font-weight: 700;
-      margin: 0.75rem 0 1.25rem;
+      margin: 0.4rem 0 1.15rem;
+      line-height: 1.3;
     }
     form {
       display: flex;
@@ -49,194 +199,433 @@
     }
     input {
       flex: 1;
-      padding: 0.75rem 0.9rem;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: #071b26;
+      padding: 0.8rem 0.95rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: var(--card-2);
       color: var(--text);
       font-size: 1rem;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--accent);
     }
     button {
-      padding: 0.75rem 1.1rem;
-      border-radius: 10px;
+      padding: 0.8rem 1.15rem;
+      border-radius: 12px;
       border: none;
       background: var(--accent);
-      color: #041018;
+      color: #03131c;
       font-weight: 700;
+      font-size: 0.95rem;
       cursor: pointer;
+    }
+    button.secondary {
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.18);
     }
     .feedback {
       margin-top: 1rem;
-      min-height: 2.5rem;
-      line-height: 1.4;
-      color: #bae6fd;
+      min-height: 2.6rem;
+      line-height: 1.45;
+      font-size: 0.95rem;
     }
-    .summary {
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+    .summary ul {
+      padding-left: 1.2rem;
+      line-height: 1.6;
+    }
+    .summary-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
       margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+
+    @media (max-width: 560px) {
+      .layout {
+        grid-template-columns: 52px 1fr;
+        gap: 0.6rem;
+      }
+      .app {
+        padding: 1.1rem;
+      }
+      .prompt {
+        font-size: 1.15rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="hud">
-      <span id="round-info">Round 1 / 7</span>
-      <span id="timer-info">Time: 25s</span>
-      <span id="depth-info">Depth: 0m</span>
-    </div>
+  <div class="bubbles" id="bubbles"></div>
 
-    <div id="game-view">
-      <div class="prompt" id="prompt-text">Loading...</div>
-      <form id="answer-form">
-        <input id="answer-input" type="text" autocomplete="off" placeholder="Type a valid (and rare!) answer..." required />
-        <button type="submit">Dive</button>
-      </form>
-      <div class="feedback" id="feedback"></div>
-    </div>
+  <div class="layout">
+    <aside class="depth-track" aria-label="Ocean depth meter">
+      <span class="zone-label">Surface</span>
+      <div class="rail"></div>
+      <div class="diver" id="diver" title="Current Depth">🤿</div>
+      <span class="zone-label">Abyss</span>
+    </aside>
 
-    <div class="summary" id="summary" hidden></div>
+    <main class="app" id="app-card">
+      <div class="top-bar">
+        <span class="badge" id="bank-count">Prompts: loading...</span>
+        <span class="badge" id="mode-badge">Daily Dive</span>
+      </div>
+
+      <div class="hud">
+        <div class="stat"><span class="label">Round</span><span class="val" id="round-info">1 / 7</span></div>
+        <div class="stat"><span class="label">Timer</span><span class="val" id="timer-info">25s</span></div>
+        <div class="stat"><span class="label">Depth</span><span class="val" id="depth-info">0m</span></div>
+      </div>
+
+      <div id="game-view">
+        <span class="category-tag" id="category-info">Category</span>
+        <div class="prompt" id="prompt-text">Generating prompts...</div>
+        <form id="answer-form">
+          <input id="answer-input" type="text" autocomplete="off" placeholder="Type a valid & rare answer..." required />
+          <button type="submit">Dive</button>
+        </form>
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <div class="summary" id="summary" hidden></div>
+    </main>
   </div>
 
   <script>
-    // Map normalized answers -> rarity weight (lower = rarer = deeper dive)
-    // In a real multiplayer app, you'd compute counts from real player submissions on a backend.
-    const PROMPTS = [
-      {
-        q: "Name a fruit that starts with B",
-        answers: {
-          "banana": 0.90,
-          "blueberry": 0.65,
-          "blackberry": 0.55,
-          "boysenberry": 0.15,
-          "breadfruit": 0.08,
-          "buddha's hand": 0.03
+    // Spawn subtle rising bubbles
+    (function createBubbles() {
+      const container = document.getElementById("bubbles");
+      for (let i = 0; i < 18; i++) {
+        const b = document.createElement("span");
+        b.className = "bubble";
+        const size = 6 + Math.random() * 14;
+        b.style.width = `${size}px`;
+        b.style.height = `${size}px`;
+        b.style.left = `${Math.random() * 100}%`;
+        b.style.animationDuration = `${7 + Math.random() * 9}s`;
+        b.style.animationDelay = `${-Math.random() * 10}s`;
+        container.appendChild(b);
+      }
+    })();
+
+    // Master item banks: [name, popularityWeight (0.02 = very rare, 0.95 = super common)]
+    const BANKS = {
+      Country: [
+        ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
+        ["Australia", 0.85], ["Italy", 0.84], ["Spain", 0.82], ["India", 0.86], ["Mexico", 0.83],
+        ["Argentina", 0.78], ["Egypt", 0.77], ["Norway", 0.72], ["Sweden", 0.70], ["Greece", 0.72],
+        ["Thailand", 0.68], ["Kenya", 0.64], ["Peru", 0.62], ["Chile", 0.63], ["Portugal", 0.65],
+        ["Ireland", 0.64], ["Poland", 0.60], ["Nigeria", 0.62], ["Morocco", 0.56], ["Vietnam", 0.58],
+        ["Colombia", 0.60], ["Iceland", 0.55], ["Finland", 0.54], ["Denmark", 0.55], ["Austria", 0.52],
+        ["Belgium", 0.53], ["Croatia", 0.45], ["Hungary", 0.44], ["Romania", 0.42], ["Jamaica", 0.50],
+        ["Cuba", 0.52], ["Nepal", 0.40], ["Mongolia", 0.35], ["Uruguay", 0.26], ["Ecuador", 0.34],
+        ["Bolivia", 0.32], ["Paraguay", 0.22], ["Estonia", 0.24], ["Latvia", 0.22], ["Lithuania", 0.23],
+        ["Slovenia", 0.22], ["Slovakia", 0.21], ["Bulgaria", 0.25], ["Serbia", 0.26], ["Georgia", 0.25],
+        ["Armenia", 0.20], ["Jordan", 0.28], ["Oman", 0.22], ["Qatar", 0.35], ["Kuwait", 0.26],
+        ["Bahrain", 0.18], ["Brunei", 0.14], ["Bhutan", 0.20], ["Guyana", 0.11], ["Suriname", 0.09],
+        ["Belize", 0.16], ["Fiji", 0.24], ["Samoa", 0.15], ["Tonga", 0.12], ["Malawi", 0.12],
+        ["Zambia", 0.14], ["Namibia", 0.16], ["Botswana", 0.15], ["Rwanda", 0.18], ["Uganda", 0.17],
+        ["Senegal", 0.16], ["Ghana", 0.25], ["Tunisia", 0.24], ["Algeria", 0.26], ["Lebanon", 0.25],
+        ["Cyprus", 0.22], ["Malta", 0.18], ["Luxembourg", 0.24], ["Liechtenstein", 0.08], ["Andorra", 0.10],
+        ["Monaco", 0.20], ["San Marino", 0.09], ["Maldives", 0.34], ["Mauritius", 0.16], ["Seychelles", 0.12]
+      ],
+      Animal: [
+        ["Dog", 0.95], ["Cat", 0.94], ["Lion", 0.90], ["Tiger", 0.89], ["Elephant", 0.88],
+        ["Bear", 0.85], ["Wolf", 0.84], ["Fox", 0.82], ["Shark", 0.83], ["Dolphin", 0.81],
+        ["Whale", 0.80], ["Eagle", 0.78], ["Owl", 0.76], ["Horse", 0.84], ["Cow", 0.82],
+        ["Pig", 0.79], ["Sheep", 0.75], ["Goat", 0.74], ["Deer", 0.73], ["Moose", 0.62],
+        ["Zebra", 0.75], ["Giraffe", 0.76], ["Kangaroo", 0.72], ["Koala", 0.70], ["Panda", 0.74],
+        ["Penguin", 0.77], ["Octopus", 0.68], ["Squid", 0.56], ["Crab", 0.62], ["Lobster", 0.58],
+        ["Cheetah", 0.66], ["Leopard", 0.64], ["Jaguar", 0.58], ["Panther", 0.60], ["Hyena", 0.54],
+        ["Badger", 0.44], ["Otter", 0.52], ["Beaver", 0.50], ["Raccoon", 0.55], ["Squirrel", 0.65],
+        ["Hedgehog", 0.48], ["Porcupine", 0.40], ["Armadillo", 0.34], ["Sloth", 0.50], ["Meerkat", 0.42],
+        ["Flamingo", 0.56], ["Pelican", 0.42], ["Toucan", 0.38], ["Albatross", 0.24], ["Narwhal", 0.30],
+        ["Manatee", 0.34], ["Walrus", 0.36], ["Wombat", 0.22], ["Platypus", 0.35], ["Axolotl", 0.32],
+        ["Chameleon", 0.42], ["Iguana", 0.44], ["Gecko", 0.40], ["Komodo Dragon", 0.26], ["Falcon", 0.45],
+        ["Hawk", 0.52], ["Vulture", 0.40], ["Swan", 0.50], ["Goose", 0.54], ["Duck", 0.68],
+        ["Crow", 0.55], ["Raven", 0.46], ["Magpie", 0.36], ["Starling", 0.24], ["Kingfisher", 0.22],
+        ["Ocelot", 0.14], ["Tapir", 0.12], ["Okapi", 0.11], ["Lemur", 0.36], ["Baboon", 0.38],
+        ["Gibbon", 0.18], ["Marmot", 0.14], ["Ferret", 0.34], ["Weasel", 0.26], ["Lynx", 0.30]
+      ],
+      Food: [
+        ["Pizza", 0.95], ["Burger", 0.92], ["Pasta", 0.90], ["Sushi", 0.88], ["Taco", 0.86],
+        ["Rice", 0.88], ["Bread", 0.87], ["Cheese", 0.89], ["Steak", 0.84], ["Soup", 0.83],
+        ["Salad", 0.82], ["Ramen", 0.78], ["Curry", 0.76], ["Dumpling", 0.66], ["Croissant", 0.72],
+        ["Waffle", 0.74], ["Pancake", 0.77], ["Omelette", 0.62], ["Lasagna", 0.68], ["Risotto", 0.54],
+        ["Falafel", 0.52], ["Hummus", 0.55], ["Paella", 0.46], ["Goulash", 0.30], ["Ceviche", 0.34],
+        ["Kimchi", 0.48], ["Pho", 0.46], ["Pierogi", 0.32], ["Empanada", 0.42], ["Baklava", 0.40],
+        ["Tiramisu", 0.48], ["Brownie", 0.70], ["Cookie", 0.80], ["Muffin", 0.68], ["Bagel", 0.66],
+        ["Pretzel", 0.62], ["Nachos", 0.70], ["Burrito", 0.74], ["Quesadilla", 0.62], ["Gumbo", 0.32],
+        ["Jambalaya", 0.30], ["Ratatouille", 0.36], ["Quiche", 0.38], ["Crepe", 0.45], ["Macaron", 0.44],
+        ["Churro", 0.48], ["Cannoli", 0.38], ["Gelato", 0.54], ["Sorbet", 0.42], ["Pudding", 0.52],
+        ["Apple", 0.92], ["Banana", 0.91], ["Orange", 0.89], ["Mango", 0.78], ["Strawberry", 0.82],
+        ["Blueberry", 0.72], ["Pineapple", 0.76], ["Peach", 0.68], ["Pear", 0.65], ["Cherry", 0.66],
+        ["Kiwi", 0.64], ["Papaya", 0.46], ["Guava", 0.36], ["Lychee", 0.28], ["Persimmon", 0.22],
+        ["Pomegranate", 0.44], ["Fig", 0.42], ["Date", 0.38], ["Apricot", 0.40], ["Plum", 0.50]
+      ],
+      "City & Place": [
+        ["London", 0.93], ["Paris", 0.92], ["Tokyo", 0.91], ["New York", 0.92], ["Rome", 0.86],
+        ["Berlin", 0.82], ["Madrid", 0.80], ["Sydney", 0.81], ["Toronto", 0.78], ["Chicago", 0.79],
+        ["Los Angeles", 0.83], ["San Francisco", 0.77], ["Miami", 0.75], ["Seoul", 0.74], ["Bangkok", 0.72],
+        ["Cairo", 0.73], ["Dubai", 0.76], ["Istanbul", 0.72], ["Amsterdam", 0.71], ["Vienna", 0.64],
+        ["Prague", 0.62], ["Lisbon", 0.60], ["Dublin", 0.61], ["Oslo", 0.55], ["Stockholm", 0.54],
+        ["Zurich", 0.54], ["Munich", 0.52], ["Barcelona", 0.68], ["Milan", 0.62], ["Venice", 0.66],
+        ["Florence", 0.58], ["Athens", 0.62], ["Warsaw", 0.48], ["Budapest", 0.50], ["Helsinki", 0.46],
+        ["Reykjavik", 0.48], ["Lima", 0.46], ["Bogota", 0.44], ["Santiago", 0.45], ["Buenos Aires", 0.56],
+        ["Kyoto", 0.58], ["Osaka", 0.50], ["Hanoi", 0.42], ["Taipei", 0.44], ["Jakarta", 0.42],
+        ["Nairobi", 0.44], ["Lagos", 0.42], ["Casablanca", 0.38], ["Marrakech", 0.40], ["Edinburgh", 0.52],
+        ["Glasgow", 0.42], ["Bristol", 0.36], ["Manchester", 0.45], ["Liverpool", 0.44], ["Belfast", 0.34],
+        ["Cardiff", 0.34], ["Galway", 0.26], ["Bergen", 0.24], ["Ghent", 0.20], ["Porto", 0.36],
+        ["Seville", 0.34], ["Valencia", 0.34], ["Bologna", 0.28], ["Salzburg", 0.30], ["Krakow", 0.34],
+        ["Tallinn", 0.24], ["Riga", 0.22], ["Vilnius", 0.21], ["Tbilisi", 0.20], ["Yerevan", 0.18]
+      ],
+      "Science & Nature": [
+        ["Oxygen", 0.88], ["Hydrogen", 0.85], ["Carbon", 0.86], ["Helium", 0.80], ["Nitrogen", 0.78],
+        ["Iron", 0.82], ["Gold", 0.86], ["Silver", 0.82], ["Copper", 0.74], ["Mercury", 0.72],
+        ["Uranium", 0.64], ["Silicon", 0.58], ["Neon", 0.62], ["Argon", 0.46], ["Lithium", 0.56],
+        ["Cobalt", 0.42], ["Nickel", 0.46], ["Titanium", 0.52], ["Platinum", 0.54], ["Zinc", 0.50],
+        ["Mars", 0.90], ["Jupiter", 0.86], ["Saturn", 0.84], ["Venus", 0.80], ["Neptune", 0.72],
+        ["Uranus", 0.70], ["Pluto", 0.76], ["Comet", 0.64], ["Asteroid", 0.62], ["Nebula", 0.50],
+        ["Quasar", 0.24], ["Pulsar", 0.22], ["Supernova", 0.54], ["Galaxy", 0.78], ["Orbit", 0.66],
+        ["Volcano", 0.80], ["Glacier", 0.70], ["Canyon", 0.68], ["Tundra", 0.52], ["Savanna", 0.54],
+        ["Lagoon", 0.48], ["Fjord", 0.42], ["Atoll", 0.22], ["Estuary", 0.26], ["Geyser", 0.44],
+        ["Basalt", 0.30], ["Granite", 0.56], ["Quartz", 0.54], ["Obsidian", 0.44], ["Emerald", 0.58]
+      ],
+      "Culture & Objects": [
+        ["Guitar", 0.90], ["Piano", 0.88], ["Violin", 0.82], ["Drums", 0.84], ["Flute", 0.72],
+        ["Trumpet", 0.70], ["Cello", 0.56], ["Harp", 0.54], ["Banjo", 0.44], ["Saxophone", 0.62],
+        ["Clarinet", 0.48], ["Ukulele", 0.52], ["Accordion", 0.42], ["Sitar", 0.24], ["Oboe", 0.28],
+        ["Compass", 0.72], ["Lantern", 0.66], ["Mirror", 0.78], ["Anchor", 0.68], ["Hammer", 0.76],
+        ["Wrench", 0.64], ["Candle", 0.75], ["Clock", 0.78], ["Map", 0.80], ["Crown", 0.72],
+        ["Shield", 0.70], ["Sword", 0.74], ["Helmet", 0.72], ["Prism", 0.46], ["Pendulum", 0.36],
+        ["Kaleidoscope", 0.32], ["Hourglass", 0.48], ["Sundial", 0.34], ["Sextant", 0.16], ["Astrolabe", 0.14],
+        ["Chess", 0.82], ["Origami", 0.56], ["Sculpture", 0.62], ["Mosaic", 0.44], ["Fresco", 0.28],
+        ["Sonnet", 0.40], ["Haiku", 0.52], ["Ballad", 0.38], ["Fable", 0.44], ["Myth", 0.64]
+      ]
+    };
+
+    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    function generatePromptBank() {
+      const prompts = [];
+      const seen = new Set();
+
+      const addPrompt = (category, question, items) => {
+        if (!items || items.length < 2) return;
+        const key = `${category}|${question}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+
+        const answers = {};
+        for (const [name, pop] of items) {
+          const clean = name.trim().toLowerCase().replace(/\s+/g, " ");
+          answers[clean] = pop;
         }
-      },
-      {
-        q: "Name a planet in our solar system",
-        answers: {
-          "mars": 0.92,
-          "earth": 0.90,
-          "jupiter": 0.85,
-          "saturn": 0.80,
-          "venus": 0.75,
-          "mercury": 0.70,
-          "uranus": 0.60,
-          "neptune": 0.58
+        prompts.push({ category, question, answers });
+      };
+
+      for (const [category, list] of Object.entries(BANKS)) {
+        for (const letter of ALPHABET) {
+          const matches = list.filter(([n]) => n.trim().toUpperCase().startsWith(letter));
+          addPrompt(category, `Name a ${category.toLowerCase()} starting with "${letter}"`, matches);
         }
-      },
-      {
-        q: "Name a programming language",
-        answers: {
-          "python": 0.90,
-          "javascript": 0.88,
-          "java": 0.82,
-          "c++": 0.70,
-          "rust": 0.40,
-          "haskell": 0.14,
-          "erlang": 0.09,
-          "brainfuck": 0.04
+        for (const letter of ALPHABET) {
+          const matches = list.filter(([n]) => {
+            const wordOnly = n.trim().replace(/[^a-zA-Z]/g, "");
+            return wordOnly.toUpperCase().endsWith(letter);
+          });
+          addPrompt(category, `Name a ${category.toLowerCase()} ending with "${letter}"`, matches);
         }
-      },
-      {
-        q: "Name a country in South America",
-        answers: {
-          "brazil": 0.92,
-          "argentina": 0.80,
-          "chile": 0.65,
-          "peru": 0.62,
-          "colombia": 0.60,
-          "uruguay": 0.25,
-          "suriname": 0.07,
-          "guyana": 0.08
+        for (let len = 3; len <= 12; len++) {
+          const matches = list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len);
+          addPrompt(category, `Name a ${category.toLowerCase()} with ${len} letters`, matches);
         }
-      },
-      {
-        q: "Name a musical instrument with strings",
-        answers: {
-          "guitar": 0.92,
-          "violin": 0.82,
-          "piano": 0.80,
-          "cello": 0.50,
-          "harp": 0.35,
-          "banjo": 0.28,
-          "sitar": 0.10,
-          "hurdy gurdy": 0.03
+        for (const minLen of [6, 8, 10]) {
+          const matches = list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length >= minLen);
+          addPrompt(category, `Name a ${category.toLowerCase()} with at least ${minLen} letters`, matches);
         }
-      },
-      {
-        q: "Name a geometric shape (2D)",
-        answers: {
-          "circle": 0.90,
-          "square": 0.88,
-          "triangle": 0.86,
-          "hexagon": 0.45,
-          "octagon": 0.40,
-          "rhombus": 0.22,
-          "dodecagon": 0.05
-        }
-      },
-      {
-        q: "Name a type of cloud",
-        answers: {
-          "cumulus": 0.80,
-          "cirrus": 0.65,
-          "stratus": 0.60,
-          "cumulonimbus": 0.35,
-          "altocumulus": 0.18,
-          "nimbostratus": 0.14,
-          "mammatus": 0.05
+        const doubleLetterItems = list.filter(([n]) => /([a-zA-Z])\1/i.test(n));
+        addPrompt(category, `Name a ${category.toLowerCase()} containing double letters`, doubleLetterItems);
+
+        const singleWordItems = list.filter(([n]) => n.trim().split(/\s+/).length === 1);
+        addPrompt(category, `Name a single-word ${category.toLowerCase()}`, singleWordItems);
+
+        const multiWordItems = list.filter(([n]) => n.trim().split(/\s+/).length >= 2);
+        addPrompt(category, `Name a two-or-more-word ${category.toLowerCase()}`, multiWordItems);
+
+        const rareItems = list.filter(([, pop]) => pop <= 0.35);
+        addPrompt(category, `Name a lesser-known ${category.toLowerCase()}`, rareItems);
+
+        const commonItems = list.filter(([, pop]) => pop >= 0.70);
+        addPrompt(category, `Name a well-known ${category.toLowerCase()}`, commonItems);
+      }
+
+      const allItems = Object.entries(BANKS).flatMap(([cat, arr]) =>
+        arr.map(([name, pop]) => [name, pop, cat])
+      );
+
+      for (const letter of ALPHABET) {
+        const matches = allItems
+          .filter(([n]) => n.trim().toUpperCase().startsWith(letter))
+          .map(([n, pop]) => [n, pop]);
+        addPrompt("Any Category", `Name anything starting with "${letter}"`, matches);
+      }
+
+      for (let len = 4; len <= 11; len++) {
+        const matches = allItems
+          .filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len)
+          .map(([n, pop]) => [n, pop]);
+        addPrompt("Any Category", `Name anything with ${len} letters`, matches);
+      }
+
+      for (const letter of ALPHABET) {
+        for (const minLen of [4, 5, 6, 7]) {
+          const matches = allItems
+            .filter(([n]) =>
+              n.trim().toUpperCase().startsWith(letter) &&
+              n.replace(/[^a-zA-Z]/g, "").length >= minLen
+            )
+            .map(([n, pop]) => [n, pop]);
+          addPrompt("Word Challenge", `Starts with "${letter}" and has ${minLen}+ letters`, matches);
         }
       }
-    ];
+
+      return prompts;
+    }
+
+    const ALL_PROMPTS = generatePromptBank();
+    document.getElementById("bank-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()}`;
+
+    function hashString(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function pickSeededSeven(seedStr) {
+      let seed = hashString(seedStr) || 1;
+      const pool = [...ALL_PROMPTS];
+      const chosen = [];
+      while (chosen.length < 7 && pool.length > 0) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        const idx = seed % pool.length;
+        chosen.push(pool.splice(idx, 1)[0]);
+      }
+      return chosen;
+    }
 
     const ROUND_SECONDS = 25;
+    const MAX_EXPECTED_DEPTH = 4500; // Scales visual sink depth smoothly
+    let activePrompts = [];
     let roundIndex = 0;
     let totalPoints = 0;
     let timeLeft = ROUND_SECONDS;
     let timerId = null;
-    const history = [];
+    let history = [];
 
+    const modeBadge = document.getElementById("mode-badge");
     const roundInfo = document.getElementById("round-info");
     const timerInfo = document.getElementById("timer-info");
     const depthInfo = document.getElementById("depth-info");
+    const categoryInfo = document.getElementById("category-info");
     const promptText = document.getElementById("prompt-text");
     const form = document.getElementById("answer-form");
     const input = document.getElementById("answer-input");
     const feedback = document.getElementById("feedback");
     const summary = document.getElementById("summary");
     const gameView = document.getElementById("game-view");
+    const diver = document.getElementById("diver");
+    const appCard = document.getElementById("app-card");
+    const trackEl = document.querySelector(".depth-track");
 
-    const normalize = (str) =>
-      str.trim().toLowerCase().replace(/\s+/g, " ");
+    const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, " ");
 
-    function scoreRarity(popularity) {
-      // popularity is in (0, 1]; rarer (lower popularity) gives higher points (10 to 100)
-      const rarity = Math.max(0.05, 1 - popularity);
-      return Math.round(rarity * 100);
+    function findMatch(answers, raw) {
+      const norm = normalize(raw);
+      if (!norm) return null;
+      if (Object.prototype.hasOwnProperty.call(answers, norm)) {
+        return { matched: norm, pop: answers[norm] };
+      }
+      const alt = norm.endsWith("s") ? norm.slice(0, -1) : `${norm}s`;
+      if (Object.prototype.hasOwnProperty.call(answers, alt)) {
+        return { matched: alt, pop: Math.min(0.95, answers[alt] + 0.05) };
+      }
+      return null;
+    }
+
+    function updateSinkAnimation(depthMeters, didSink) {
+      const ratio = Math.min(1, depthMeters / MAX_EXPECTED_DEPTH);
+
+      // Darken ocean backdrop as depth increases
+      const bgPos = Math.round(ratio * 100);
+      document.body.style.backgroundPosition = `0% ${bgPos}%`;
+
+      // Move diver down the vertical track
+      const trackHeight = trackEl ? trackEl.clientHeight : 410;
+      const topMin = 34;
+      const topMax = Math.max(topMin + 20, trackHeight - 58);
+      const diverTop = topMin + ratio * (topMax - topMin);
+      diver.style.top = `${diverTop}px`;
+
+      // Pop depth counter & trigger sink pulse on card/diver
+      depthInfo.textContent = `${depthMeters.toLocaleString()}m`;
+      depthInfo.classList.remove("pop");
+      void depthInfo.offsetWidth;
+      depthInfo.classList.add("pop");
+
+      if (didSink) {
+        diver.classList.add("sinking");
+        appCard.classList.remove("sink-pulse");
+        void appCard.offsetWidth;
+        appCard.classList.add("sink-pulse");
+        setTimeout(() => diver.classList.remove("sinking"), 1150);
+      }
+    }
+
+    function startSession(mode = "daily") {
+      clearInterval(timerId);
+      const todayUtc = new Date().toISOString().slice(0, 10);
+      const seed = mode === "daily" ? `daily-${todayUtc}` : `rand-${Date.now()}-${Math.random()}`;
+      modeBadge.textContent = mode === "daily" ? `Daily Dive (${todayUtc})` : "Random Dive";
+
+      activePrompts = pickSeededSeven(seed);
+      roundIndex = 0;
+      totalPoints = 0;
+      history = [];
+      feedback.textContent = "";
+      summary.hidden = true;
+      gameView.hidden = false;
+      updateSinkAnimation(0, false);
+      startRound();
     }
 
     function startRound() {
-      if (roundIndex >= PROMPTS.length) {
+      if (roundIndex >= activePrompts.length) {
         endDive();
         return;
       }
-
-      const current = PROMPTS[roundIndex];
-      roundInfo.textContent = `Round ${roundIndex + 1} / ${PROMPTS.length}`;
-      promptText.textContent = current.q;
+      const cur = activePrompts[roundIndex];
+      roundInfo.textContent = `${roundIndex + 1} / ${activePrompts.length}`;
+      categoryInfo.textContent = cur.category;
+      promptText.textContent = cur.question;
       input.value = "";
       input.disabled = false;
       input.focus();
 
       timeLeft = ROUND_SECONDS;
-      timerInfo.textContent = `Time: ${timeLeft}s`;
-
+      timerInfo.textContent = `${timeLeft}s`;
       clearInterval(timerId);
       timerId = setInterval(() => {
         timeLeft -= 1;
-        timerInfo.textContent = `Time: ${timeLeft}s`;
+        timerInfo.textContent = `${timeLeft}s`;
         if (timeLeft <= 0) {
           clearInterval(timerId);
           submitAnswer("", true);
@@ -248,43 +637,48 @@
       clearInterval(timerId);
       input.disabled = true;
 
-      const current = PROMPTS[roundIndex];
-      const norm = normalize(rawAnswer);
+      const cur = activePrompts[roundIndex];
+      const cleaned = rawAnswer.trim();
       let pts = 0;
-      let status = "";
 
       if (timedOut) {
-        status = "Time's up! 0 pts.";
-      } else if (Object.prototype.hasOwnProperty.call(current.answers, norm)) {
-        const pop = current.answers[norm];
-        pts = scoreRarity(pop);
-        const tier = pts >= 85 ? "One in a Krillion!" : pts >= 55 ? "Deep Cut" : pts >= 30 ? "Rare" : "Common";
-        status = `Accepted ("${rawAnswer.trim()}") — ${tier} (+${pts} pts, +${pts * 10}m)`;
+        feedback.innerHTML = `<span class="bad">Time's up! +0 pts</span>`;
       } else {
-        status = `Not in answer list ("${rawAnswer.trim()}") — 0 pts.`;
+        const hit = findMatch(cur.answers, cleaned);
+        if (hit) {
+          pts = Math.max(5, Math.round((1 - hit.pop) * 100));
+          const tier = pts >= 80 ? "One in a Krillion!" : pts >= 55 ? "Deep Cut" : pts >= 30 ? "Rare" : "Common";
+          const cls = pts >= 55 ? "ok" : "warn";
+          feedback.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong> → ${tier} (+${pts} pts, sinking +${pts * 10}m...)</span>`;
+        } else {
+          feedback.innerHTML = `<span class="bad">"${cleaned}" isn't in this prompt's list (+0 pts)</span>`;
+        }
       }
 
       totalPoints += pts;
-      depthInfo.textContent = `Depth: ${totalPoints * 10}m`;
-      feedback.textContent = status;
-      history.push({ q: current.q, answer: rawAnswer.trim() || "—", pts });
+      updateSinkAnimation(totalPoints * 10, pts > 0);
+      history.push({ q: cur.question, ans: cleaned || "—", pts });
 
       roundIndex += 1;
-      setTimeout(startRound, 1400);
+      setTimeout(startRound, 1450);
     }
 
     function endDive() {
       gameView.hidden = true;
       summary.hidden = false;
       const depth = totalPoints * 10;
-      const items = history
-        .map((h) => `<li><strong>${h.q}</strong>: ${h.answer} (<em>+${h.pts} pts</em>)</li>`)
+      const rows = history
+        .map((h) => `<li>${h.q} — <strong>${h.ans}</strong> (<em>+${h.pts} pts</em>)</li>`)
         .join("");
+
       summary.innerHTML = `
         <h2>Dive Complete!</h2>
-        <p>Total Score: <strong>${totalPoints} pts</strong> | Max Depth: <strong>${depth}m</strong></p>
-        <ul>${items}</ul>
-        <button onclick="location.reload()">Dive Again</button>
+        <p>Score: <strong>${totalPoints} pts</strong> · Max Depth: <strong>${depth.toLocaleString()}m</strong></p>
+        <ul>${rows}</ul>
+        <div class="summary-actions">
+          <button onclick="startSession('random')">Play Another 7 (Random)</button>
+          <button class="secondary" onclick="startSession('daily')">Replay Today's Daily</button>
+        </div>
       `;
     }
 
@@ -293,7 +687,7 @@
       submitAnswer(input.value, false);
     });
 
-    startRound();
+    startSession("daily");
   </script>
 </body>
 </html>
