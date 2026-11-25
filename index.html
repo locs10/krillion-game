@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Krillion — Ocean Dive</title>
+  <title>Krillion — Deep Abyssal Dive</title>
   <style>
     :root {
       --card: rgba(7, 27, 40, 0.84);
@@ -15,7 +15,8 @@
       --ok: #34d399;
       --warn: #fbbf24;
       --bad: #f87171;
-      --column-y: 0px;
+      --column-y: 0vh;
+      --ui-drop: 0px;
     }
 
     * { box-sizing: border-box; }
@@ -27,24 +28,16 @@
       overflow: hidden;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background: #041724;
+      background: #020b14;
     }
 
-    /* Continuous full-viewport ocean column that scrolls downward as you sink */
+    /* Massive vertical ocean column that drops far downward through depth zones */
     .ocean-world {
       position: fixed;
       inset: 0;
       overflow: hidden;
       z-index: 0;
-      background: linear-gradient(
-        180deg,
-        #1679ab 0%,
-        #0d4d70 18%,
-        #072c42 42%,
-        #041826 68%,
-        #020b14 88%,
-        #010408 100%
-      );
+      background: #010408;
     }
 
     .ocean-column {
@@ -52,36 +45,46 @@
       left: 0;
       right: 0;
       top: 0;
-      height: 360vh;
+      height: 900vh;
+      background: linear-gradient(
+        180deg,
+        #1b8bc2 0%,
+        #136894 6%,
+        #0c4566 15%,
+        #072b42 28%,
+        #041a2b 45%,
+        #020e1a 65%,
+        #01070e 84%,
+        #000306 100%
+      );
       transform: translateY(var(--column-y));
-      transition: transform 1.45s cubic-bezier(0.16, 0.88, 0.28, 1);
+      transition: transform 1.85s cubic-bezier(0.14, 0.88, 0.24, 1);
       pointer-events: none;
     }
 
-    /* Animated water surface & light rays near top of column */
     .surface-band {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 140px;
-      background: linear-gradient(180deg, rgba(125, 211, 252, 0.34), rgba(14, 116, 144, 0));
+      height: 220px;
+      background: linear-gradient(180deg, rgba(125, 211, 252, 0.38), rgba(14, 116, 144, 0));
     }
 
     .wave-line {
       position: absolute;
-      top: 78px;
+      top: 110px;
       left: -25%;
       width: 150%;
-      height: 34px;
-      border-top: 2px solid rgba(224, 242, 254, 0.65);
+      height: 40px;
+      border-top: 2px solid rgba(224, 242, 254, 0.7);
       border-radius: 45%;
       background: rgba(186, 230, 253, 0.14);
       animation: waveDrift 7s ease-in-out infinite;
     }
 
     .wave-line.second {
-      top: 90px;
+      top: 124px;
       border-top-color: rgba(56, 189, 248, 0.35);
       background: rgba(34, 211, 238, 0.08);
       animation: waveDrift 10s ease-in-out infinite reverse;
@@ -89,28 +92,58 @@
 
     @keyframes waveDrift {
       0%, 100% { transform: translateX(0) translateY(0); }
-      50% { transform: translateX(3.5%) translateY(5px); }
+      50% { transform: translateX(3.5%) translateY(6px); }
     }
 
-    /* Depth markers spaced down the ocean column */
+    /* Depth markers spaced far apart down the massive ocean column */
     .depth-marker {
       position: absolute;
-      left: 1rem;
-      right: 1rem;
+      left: 1.25rem;
+      right: 1.25rem;
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
+      gap: 0.75rem;
+      font-size: 0.76rem;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: rgba(186, 230, 253, 0.38);
+      color: rgba(186, 230, 253, 0.42);
     }
 
     .depth-marker::after {
       content: "";
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, rgba(186, 230, 253, 0.22), rgba(186, 230, 253, 0.03));
+      background: linear-gradient(90deg, rgba(186, 230, 253, 0.25), rgba(186, 230, 253, 0.03));
+    }
+
+    /* Vertical plunge streaks when sinking fast */
+    .rush-lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .rush-lines.active {
+      opacity: 1;
+    }
+
+    .streak {
+      position: absolute;
+      top: -140px;
+      width: 2px;
+      height: 120px;
+      background: linear-gradient(180deg, rgba(186, 230, 253, 0), rgba(125, 211, 252, 0.45), rgba(186, 230, 253, 0));
+      animation: fallStreak 0.75s linear infinite;
+    }
+
+    @keyframes fallStreak {
+      0% { transform: translateY(-140px); opacity: 0; }
+      20% { opacity: 0.85; }
+      100% { transform: translateY(115vh); opacity: 0; }
     }
 
     .bubbles {
@@ -137,7 +170,6 @@
       100% { transform: translateY(-112vh) translateX(14px); opacity: 0; }
     }
 
-    /* Foreground UI container */
     .ui-shell {
       position: relative;
       z-index: 2;
@@ -152,14 +184,11 @@
       width: 100%;
       max-width: 720px;
       display: grid;
-      grid-template-columns: 60px 1fr;
+      grid-template-columns: 62px 1fr;
       gap: 0.85rem;
       align-items: stretch;
-      transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .wrap.plunging {
-      transform: translateY(18px);
+      transform: translateY(var(--ui-drop));
+      transition: transform 1.45s cubic-bezier(0.16, 0.88, 0.28, 1);
     }
 
     .depth-rail-box {
@@ -167,7 +196,7 @@
       min-height: 390px;
       border-radius: 18px;
       padding: 0.75rem 0.25rem;
-      background: rgba(4, 18, 28, 0.72);
+      background: rgba(4, 18, 28, 0.76);
       border: 1px solid rgba(255,255,255,0.14);
       display: flex;
       flex-direction: column;
@@ -176,9 +205,9 @@
     }
 
     .rail-tag {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       color: var(--muted);
       writing-mode: vertical-rl;
       transform: rotate(180deg);
@@ -200,14 +229,14 @@
       top: 34px;
       left: 50%;
       transform: translate(-50%, 0);
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       line-height: 1;
       z-index: 2;
-      transition: top 1.35s cubic-bezier(0.16, 0.88, 0.28, 1), transform 0.6s ease;
+      transition: top 1.75s cubic-bezier(0.14, 0.88, 0.24, 1), transform 0.7s ease;
     }
 
     .krill-diver.sink-drop {
-      transform: translate(-50%, 8px) scale(1.15);
+      transform: translate(-50%, 14px) scale(1.22);
     }
 
     .panel {
@@ -265,7 +294,7 @@
     }
 
     .stat strong.bump {
-      transform: scale(1.22);
+      transform: scale(1.25);
       color: var(--accent-2);
     }
 
@@ -352,15 +381,17 @@
         <div class="wave-line"></div>
         <div class="wave-line second"></div>
       </div>
-      <div class="depth-marker" style="top: 14%;">200m · Sunlight Zone</div>
-      <div class="depth-marker" style="top: 32%;">1,000m · Midnight Zone</div>
-      <div class="depth-marker" style="top: 52%;">2,500m · Deep Descent</div>
-      <div class="depth-marker" style="top: 70%;">3,800m · Titanic Depth</div>
-      <div class="depth-marker" style="top: 85%;">5,000m · Abyssal Zone</div>
-      <div class="depth-marker" style="top: 96%;">7,000m · Trench Floor</div>
+      <div class="depth-marker" style="top: 6%;">200m · Sunlight Zone</div>
+      <div class="depth-marker" style="top: 15%;">1,000m · Midnight Zone</div>
+      <div class="depth-marker" style="top: 28%;">2,500m · Deep Descent</div>
+      <div class="depth-marker" style="top: 42%;">3,800m · Titanic Depth</div>
+      <div class="depth-marker" style="top: 58%;">6,000m · Hadal Zone</div>
+      <div class="depth-marker" style="top: 76%;">8,500m · Deep Trench</div>
+      <div class="depth-marker" style="top: 94%;">10,994m · Challenger Deep</div>
     </div>
   </div>
 
+  <div class="rush-lines" id="rush-lines" aria-hidden="true"></div>
   <div class="bubbles" id="bubbles" aria-hidden="true"></div>
 
   <div class="ui-shell">
@@ -369,7 +400,7 @@
         <span class="rail-tag">0m</span>
         <div class="rail-track"></div>
         <div class="krill-diver" id="krill-diver">🦐</div>
-        <span class="rail-tag">7000m</span>
+        <span class="rail-tag">11km</span>
       </aside>
 
       <main class="panel">
@@ -615,9 +646,9 @@
     const ALL_PROMPTS = buildPrompts();
     document.getElementById("prompt-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()}`;
 
-    (function spawnBubbles() {
+    (function spawnEffects() {
       const box = document.getElementById("bubbles");
-      for (let i = 0; i < 22; i++) {
+      for (let i = 0; i < 24; i++) {
         const el = document.createElement("span");
         el.className = "bubble";
         const size = 6 + Math.random() * 14;
@@ -627,6 +658,16 @@
         el.style.animationDuration = `${6 + Math.random() * 8}s`;
         el.style.animationDelay = `${-Math.random() * 10}s`;
         box.appendChild(el);
+      }
+
+      const rushBox = document.getElementById("rush-lines");
+      for (let i = 0; i < 26; i++) {
+        const st = document.createElement("span");
+        st.className = "streak";
+        st.style.left = `${Math.random() * 100}%`;
+        st.style.animationDuration = `${0.55 + Math.random() * 0.55}s`;
+        st.style.animationDelay = `${-Math.random() * 1.2}s`;
+        rushBox.appendChild(st);
       }
     })();
 
@@ -686,14 +727,13 @@
     }
 
     function pointsFromRarity(pop) {
-      // Maps rarity (1 - pop) to Krillion-style tiers: Plankton -> One in a Krillion (up to 100 pts = 1000m)
       const rarity = Math.max(0.05, Math.min(1, 1 - pop));
-      if (rarity >= 0.85) return 100; // One in a Krillion (1,000m)
-      if (rarity >= 0.68) return 64;  // Deep Cut (640m)
-      if (rarity >= 0.48) return 32;  // Rare (320m)
-      if (rarity >= 0.28) return 16;  // Schooler (160m)
-      if (rarity >= 0.14) return 8;   // Too Clever (80m)
-      return 4;                        // Plankton (40m)
+      if (rarity >= 0.85) return 100;
+      if (rarity >= 0.68) return 64;
+      if (rarity >= 0.48) return 32;
+      if (rarity >= 0.28) return 16;
+      if (rarity >= 0.14) return 8;
+      return 4;
     }
 
     function tierNameForPoints(pts) {
@@ -738,7 +778,7 @@
 
     const TOTAL_ROUNDS = 7;
     const ROUND_TIME = 25;
-    const MAX_SCALE_DEPTH = 7000;
+    const MAX_SCALE_DEPTH = 6500;
 
     let deck = [];
     let round = 0;
@@ -749,8 +789,7 @@
     let log = [];
     let busy = false;
 
-    const oceanColumnEl = document.getElementById("ocean-column");
-    const wrapEl = document.getElementById("wrap");
+    const rushLinesEl = document.getElementById("rush-lines");
     const sessionModeEl = document.getElementById("session-mode");
     const roundValEl = document.getElementById("round-val");
     const timerValEl = document.getElementById("timer-val");
@@ -784,9 +823,9 @@
     }
 
     function descendOcean(meters, gainedPts) {
+      // Exaggerated drop: scales across the 900vh ocean column (-800vh max shift)
       const ratio = Math.min(1, meters / MAX_SCALE_DEPTH);
-      // Ocean column is 360vh tall; shifting upward by up to ~260vh moves camera downward through depth zones
-      const colShiftVh = -(ratio * 260);
+      const colShiftVh = -(ratio * 800);
       document.documentElement.style.setProperty("--column-y", `${colShiftVh}vh`);
 
       // Diver slides down vertical meter
@@ -801,12 +840,19 @@
       depthValEl.classList.add("bump");
 
       if (gainedPts > 0) {
+        const dropPx = Math.min(95, 24 + Math.round((gainedPts / 100) * 71));
+        document.documentElement.style.setProperty("--ui-drop", `${dropPx}px`);
         krillDiverEl.classList.add("sink-drop");
-        wrapEl.classList.add("plunging");
+        rushLinesEl.classList.add("active");
+
+        setTimeout(() => {
+          document.documentElement.style.setProperty("--ui-drop", "0px");
+        }, 900);
+
         setTimeout(() => {
           krillDiverEl.classList.remove("sink-drop");
-          wrapEl.classList.remove("plunging");
-        }, 1150);
+          rushLinesEl.classList.remove("active");
+        }, 1650);
       }
     }
 
@@ -922,7 +968,7 @@
       log.push({ q: cur.question, ans: cleaned || "—", pts });
 
       round += 1;
-      nextRoundTimer = setTimeout(runRound, 1650);
+      nextRoundTimer = setTimeout(runRound, 1850);
     }
 
     function showResults() {
