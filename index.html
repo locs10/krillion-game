@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Krillion — Deep Abyssal Dive</title>
+  <title>Krillion — 100x Extreme Abyssal Plunge</title>
   <style>
     :root {
-      --card: rgba(7, 27, 40, 0.84);
-      --card-2: rgba(4, 16, 26, 0.9);
+      --card: rgba(6, 24, 36, 0.86);
+      --card-2: rgba(3, 14, 22, 0.92);
       --text: #f0f9ff;
       --muted: #9bc4dc;
       --accent: #38bdf8;
@@ -17,6 +17,7 @@
       --bad: #f87171;
       --column-y: 0vh;
       --ui-drop: 0px;
+      --ui-scale: 1;
     }
 
     * { box-sizing: border-box; }
@@ -28,16 +29,16 @@
       overflow: hidden;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background: #020b14;
+      background: #010408;
     }
 
-    /* Massive vertical ocean column that drops far downward through depth zones */
+    /* 250-screen tall ocean column for extreme 100x visual descent */
     .ocean-world {
       position: fixed;
       inset: 0;
       overflow: hidden;
       z-index: 0;
-      background: #010408;
+      background: #000205;
     }
 
     .ocean-column {
@@ -45,21 +46,23 @@
       left: 0;
       right: 0;
       top: 0;
-      height: 900vh;
+      height: 25000vh;
       background: linear-gradient(
         180deg,
-        #1b8bc2 0%,
-        #136894 6%,
-        #0c4566 15%,
-        #072b42 28%,
-        #041a2b 45%,
-        #020e1a 65%,
-        #01070e 84%,
-        #000306 100%
+        #22a2e0 0%,
+        #1679ab 1.5%,
+        #0d4d70 4%,
+        #072c42 9%,
+        #041a2b 18%,
+        #020e1a 35%,
+        #01070e 60%,
+        #000308 85%,
+        #000103 100%
       );
       transform: translateY(var(--column-y));
-      transition: transform 1.85s cubic-bezier(0.14, 0.88, 0.24, 1);
+      transition: transform 2.2s cubic-bezier(0.12, 0.92, 0.22, 1);
       pointer-events: none;
+      will-change: transform;
     }
 
     .surface-band {
@@ -67,27 +70,27 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 220px;
-      background: linear-gradient(180deg, rgba(125, 211, 252, 0.38), rgba(14, 116, 144, 0));
+      height: 260px;
+      background: linear-gradient(180deg, rgba(186, 230, 253, 0.5), rgba(14, 116, 144, 0));
     }
 
     .wave-line {
       position: absolute;
-      top: 110px;
+      top: 120px;
       left: -25%;
       width: 150%;
-      height: 40px;
-      border-top: 2px solid rgba(224, 242, 254, 0.7);
+      height: 44px;
+      border-top: 3px solid rgba(224, 242, 254, 0.85);
       border-radius: 45%;
-      background: rgba(186, 230, 253, 0.14);
-      animation: waveDrift 7s ease-in-out infinite;
+      background: rgba(186, 230, 253, 0.18);
+      animation: waveDrift 6s ease-in-out infinite;
     }
 
     .wave-line.second {
-      top: 124px;
-      border-top-color: rgba(56, 189, 248, 0.35);
-      background: rgba(34, 211, 238, 0.08);
-      animation: waveDrift 10s ease-in-out infinite reverse;
+      top: 136px;
+      border-top-color: rgba(56, 189, 248, 0.45);
+      background: rgba(34, 211, 238, 0.1);
+      animation: waveDrift 9s ease-in-out infinite reverse;
     }
 
     @keyframes waveDrift {
@@ -95,28 +98,39 @@
       50% { transform: translateX(3.5%) translateY(6px); }
     }
 
-    /* Depth markers spaced far apart down the massive ocean column */
+    /* Hundreds of depth lines & landmarks whipping upward past the camera */
     .depth-marker {
       position: absolute;
-      left: 1.25rem;
-      right: 1.25rem;
+      left: 1rem;
+      right: 1rem;
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-size: 0.76rem;
-      letter-spacing: 0.09em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(186, 230, 253, 0.42);
+      color: rgba(186, 230, 253, 0.48);
     }
 
     .depth-marker::after {
       content: "";
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, rgba(186, 230, 253, 0.25), rgba(186, 230, 253, 0.03));
+      background: linear-gradient(90deg, rgba(125, 211, 252, 0.35), rgba(125, 211, 252, 0.04));
     }
 
-    /* Vertical plunge streaks when sinking fast */
+    .depth-marker.major {
+      font-size: 0.95rem;
+      color: rgba(34, 211, 238, 0.78);
+    }
+
+    .depth-marker.major::after {
+      height: 2px;
+      background: linear-gradient(90deg, rgba(34, 211, 238, 0.65), rgba(34, 211, 238, 0.05));
+    }
+
+    /* High-speed upward water streaks during freefall */
     .rush-lines {
       position: fixed;
       inset: 0;
@@ -124,7 +138,7 @@
       overflow: hidden;
       z-index: 1;
       opacity: 0;
-      transition: opacity 0.35s ease;
+      transition: opacity 0.25s ease;
     }
 
     .rush-lines.active {
@@ -133,17 +147,17 @@
 
     .streak {
       position: absolute;
-      top: -140px;
-      width: 2px;
-      height: 120px;
-      background: linear-gradient(180deg, rgba(186, 230, 253, 0), rgba(125, 211, 252, 0.45), rgba(186, 230, 253, 0));
-      animation: fallStreak 0.75s linear infinite;
+      bottom: -180px;
+      width: 3px;
+      height: 180px;
+      background: linear-gradient(0deg, rgba(186, 230, 253, 0), rgba(125, 211, 252, 0.75), rgba(255, 255, 255, 0.95));
+      animation: shootUp 0.42s linear infinite;
     }
 
-    @keyframes fallStreak {
-      0% { transform: translateY(-140px); opacity: 0; }
-      20% { opacity: 0.85; }
-      100% { transform: translateY(115vh); opacity: 0; }
+    @keyframes shootUp {
+      0% { transform: translateY(180px); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-120vh); opacity: 0; }
     }
 
     .bubbles {
@@ -158,18 +172,23 @@
       position: absolute;
       bottom: -24px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), rgba(56,189,248,0.12));
-      border: 1px solid rgba(255,255,255,0.22);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.55), rgba(56,189,248,0.14));
+      border: 1px solid rgba(255,255,255,0.24);
       animation: riseBubble linear infinite;
+    }
+
+    .bubbles.turbo .bubble {
+      animation-duration: 0.75s !important;
     }
 
     @keyframes riseBubble {
       0% { transform: translateY(0) translateX(0); opacity: 0; }
-      15% { opacity: 0.65; }
-      85% { opacity: 0.4; }
-      100% { transform: translateY(-112vh) translateX(14px); opacity: 0; }
+      15% { opacity: 0.75; }
+      85% { opacity: 0.5; }
+      100% { transform: translateY(-115vh) translateX(14px); opacity: 0; }
     }
 
+    /* Foreground UI stage that physically drops dramatically on every dive */
     .ui-shell {
       position: relative;
       z-index: 2;
@@ -187,8 +206,21 @@
       grid-template-columns: 62px 1fr;
       gap: 0.85rem;
       align-items: stretch;
-      transform: translateY(var(--ui-drop));
-      transition: transform 1.45s cubic-bezier(0.16, 0.88, 0.28, 1);
+      transform: translateY(var(--ui-drop)) scale(var(--ui-scale));
+      transition: transform 1.45s cubic-bezier(0.16, 0.92, 0.24, 1);
+      will-change: transform;
+    }
+
+    .wrap.rumble {
+      animation: abyssRumble 0.55s ease-in-out;
+    }
+
+    @keyframes abyssRumble {
+      0%, 100% { margin-left: 0px; }
+      20% { margin-left: -7px; }
+      40% { margin-left: 7px; }
+      60% { margin-left: -4px; }
+      80% { margin-left: 4px; }
     }
 
     .depth-rail-box {
@@ -196,8 +228,8 @@
       min-height: 390px;
       border-radius: 18px;
       padding: 0.75rem 0.25rem;
-      background: rgba(4, 18, 28, 0.76);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(4, 18, 28, 0.78);
+      border: 1px solid rgba(255,255,255,0.16);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -220,7 +252,7 @@
       left: 50%;
       width: 3px;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.18);
       border-radius: 999px;
     }
 
@@ -229,23 +261,23 @@
       top: 34px;
       left: 50%;
       transform: translate(-50%, 0);
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       line-height: 1;
       z-index: 2;
-      transition: top 1.75s cubic-bezier(0.14, 0.88, 0.24, 1), transform 0.7s ease;
+      transition: top 2.1s cubic-bezier(0.12, 0.92, 0.22, 1), transform 0.6s ease;
     }
 
     .krill-diver.sink-drop {
-      transform: translate(-50%, 14px) scale(1.22);
+      transform: translate(-50%, 18px) scale(1.32) rotate(12deg);
     }
 
     .panel {
       background: var(--card);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.16);
       border-radius: 18px;
       padding: 1.5rem;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.65);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.72);
     }
 
     .top {
@@ -294,7 +326,7 @@
     }
 
     .stat strong.bump {
-      transform: scale(1.25);
+      transform: scale(1.3);
       color: var(--accent-2);
     }
 
@@ -381,13 +413,6 @@
         <div class="wave-line"></div>
         <div class="wave-line second"></div>
       </div>
-      <div class="depth-marker" style="top: 6%;">200m · Sunlight Zone</div>
-      <div class="depth-marker" style="top: 15%;">1,000m · Midnight Zone</div>
-      <div class="depth-marker" style="top: 28%;">2,500m · Deep Descent</div>
-      <div class="depth-marker" style="top: 42%;">3,800m · Titanic Depth</div>
-      <div class="depth-marker" style="top: 58%;">6,000m · Hadal Zone</div>
-      <div class="depth-marker" style="top: 76%;">8,500m · Deep Trench</div>
-      <div class="depth-marker" style="top: 94%;">10,994m · Challenger Deep</div>
     </div>
   </div>
 
@@ -400,7 +425,7 @@
         <span class="rail-tag">0m</span>
         <div class="rail-track"></div>
         <div class="krill-diver" id="krill-diver">🦐</div>
-        <span class="rail-tag">11km</span>
+        <span class="rail-tag">700km</span>
       </aside>
 
       <main class="panel">
@@ -431,6 +456,38 @@
   </div>
 
   <script>
+    // Populate 250-screen ocean column with rapid-fire depth markers every ~1% so you feel 100x speed
+    (function populateOceanMarkers() {
+      const col = document.getElementById("ocean-column");
+      const landmarks = {
+        1: "200m · Sunlight Zone Ends",
+        3: "1,000m · Midnight Zone",
+        6: "3,800m · RMS Titanic Wreck",
+        10: "10,994m · Challenger Deep",
+        16: "20,000m · Oceanic Crust",
+        25: "40,000m · Subduction Trench",
+        38: "80,000m · Upper Mantle",
+        52: "150,000m · Deep Asthenosphere",
+        68: "300,000m · Thermal Abyss",
+        84: "500,000m · Planetary Core Edge",
+        97: "700,000m · Bottom of the World"
+      };
+
+      for (let pct = 1; pct <= 99; pct += 1) {
+        const m = document.createElement("div");
+        const metersLabel = Math.round((pct / 100) * 700000).toLocaleString() + "m";
+        if (landmarks[pct]) {
+          m.className = "depth-marker major";
+          m.textContent = landmarks[pct];
+        } else {
+          m.className = "depth-marker";
+          m.textContent = `${metersLabel} · Sinking`;
+        }
+        m.style.top = `${pct}%`;
+        col.appendChild(m);
+      }
+    })();
+
     const ITEMS = {
       Country: [
         ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
@@ -648,25 +705,25 @@
 
     (function spawnEffects() {
       const box = document.getElementById("bubbles");
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 32; i++) {
         const el = document.createElement("span");
         el.className = "bubble";
         const size = 6 + Math.random() * 14;
         el.style.width = `${size}px`;
         el.style.height = `${size}px`;
         el.style.left = `${Math.random() * 100}%`;
-        el.style.animationDuration = `${6 + Math.random() * 8}s`;
+        el.style.animationDuration = `${5 + Math.random() * 7}s`;
         el.style.animationDelay = `${-Math.random() * 10}s`;
         box.appendChild(el);
       }
 
       const rushBox = document.getElementById("rush-lines");
-      for (let i = 0; i < 26; i++) {
+      for (let i = 0; i < 48; i++) {
         const st = document.createElement("span");
         st.className = "streak";
         st.style.left = `${Math.random() * 100}%`;
-        st.style.animationDuration = `${0.55 + Math.random() * 0.55}s`;
-        st.style.animationDelay = `${-Math.random() * 1.2}s`;
+        st.style.animationDuration = `${0.32 + Math.random() * 0.35}s`;
+        st.style.animationDelay = `${-Math.random() * 0.8}s`;
         rushBox.appendChild(st);
       }
     })();
@@ -778,18 +835,22 @@
 
     const TOTAL_ROUNDS = 7;
     const ROUND_TIME = 25;
-    const MAX_SCALE_DEPTH = 6500;
+    const METERS_PER_POINT = 1000; // 100x exaggerated visual depth scale (up to 700,000m!)
+    const MAX_SCALE_DEPTH = 700000;
 
     let deck = [];
     let round = 0;
     let score = 0;
+    let displayedMeters = 0;
     let timeLeft = ROUND_TIME;
     let countdown = null;
     let nextRoundTimer = null;
     let log = [];
     let busy = false;
 
+    const bubblesEl = document.getElementById("bubbles");
     const rushLinesEl = document.getElementById("rush-lines");
+    const wrapEl = document.getElementById("wrap");
     const sessionModeEl = document.getElementById("session-mode");
     const roundValEl = document.getElementById("round-val");
     const timerValEl = document.getElementById("timer-val");
@@ -822,10 +883,29 @@
       return null;
     }
 
+    function animateDepthCounter(targetMeters) {
+      const start = displayedMeters;
+      const diff = targetMeters - start;
+      if (diff === 0) {
+        depthValEl.textContent = `${targetMeters.toLocaleString()}m`;
+        return;
+      }
+      const duration = 1400;
+      const startTime = performance.now();
+      function step(now) {
+        const t = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        displayedMeters = Math.round(start + diff * eased);
+        depthValEl.textContent = `${displayedMeters.toLocaleString()}m`;
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
     function descendOcean(meters, gainedPts) {
-      // Exaggerated drop: scales across the 900vh ocean column (-800vh max shift)
+      // 100x exaggerated scroll across 25,000vh ocean column (-24,900vh max shift)
       const ratio = Math.min(1, meters / MAX_SCALE_DEPTH);
-      const colShiftVh = -(ratio * 800);
+      const colShiftVh = -(ratio * 24900);
       document.documentElement.style.setProperty("--column-y", `${colShiftVh}vh`);
 
       // Diver slides down vertical meter
@@ -834,25 +914,33 @@
       const topEnd = Math.max(topStart + 20, h - 56);
       krillDiverEl.style.top = `${topStart + ratio * (topEnd - topStart)}px`;
 
-      depthValEl.textContent = `${meters.toLocaleString()}m`;
+      animateDepthCounter(meters);
       depthValEl.classList.remove("bump");
       void depthValEl.offsetWidth;
       depthValEl.classList.add("bump");
 
       if (gainedPts > 0) {
-        const dropPx = Math.min(95, 24 + Math.round((gainedPts / 100) * 71));
+        // Massive physical downward drop of the entire card + camera shake
+        const dropPx = Math.min(220, 65 + Math.round((gainedPts / 100) * 155));
         document.documentElement.style.setProperty("--ui-drop", `${dropPx}px`);
+        document.documentElement.style.setProperty("--ui-scale", "0.94");
         krillDiverEl.classList.add("sink-drop");
         rushLinesEl.classList.add("active");
+        bubblesEl.classList.add("turbo");
+        wrapEl.classList.remove("rumble");
+        void wrapEl.offsetWidth;
+        wrapEl.classList.add("rumble");
 
         setTimeout(() => {
           document.documentElement.style.setProperty("--ui-drop", "0px");
-        }, 900);
+          document.documentElement.style.setProperty("--ui-scale", "1");
+        }, 1150);
 
         setTimeout(() => {
           krillDiverEl.classList.remove("sink-drop");
           rushLinesEl.classList.remove("active");
-        }, 1650);
+          bubblesEl.classList.remove("turbo");
+        }, 2000);
       }
     }
 
@@ -868,6 +956,7 @@
       deck = pickSeven(seed);
       round = 0;
       score = 0;
+      displayedMeters = 0;
       log = [];
       msgEl.textContent = "";
       resultsAreaEl.hidden = true;
@@ -957,18 +1046,19 @@
           pts = pointsFromRarity(res.pop);
           const tier = tierNameForPoints(pts);
           const cls = pts >= 32 ? "ok" : "warn";
-          msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.extra} — <strong>${tier}</strong> (+${pts} pts / -${pts * 10}m)</span>`;
+          const dropMeters = pts * METERS_PER_POINT;
+          msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.extra} — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
         } else {
           msgEl.innerHTML = `<span class="bad">${res.reason} (+0 pts)</span>`;
         }
       }
 
       score += pts;
-      descendOcean(score * 10, pts);
+      descendOcean(score * METERS_PER_POINT, pts);
       log.push({ q: cur.question, ans: cleaned || "—", pts });
 
       round += 1;
-      nextRoundTimer = setTimeout(runRound, 1850);
+      nextRoundTimer = setTimeout(runRound, 2100);
     }
 
     function showResults() {
@@ -977,9 +1067,9 @@
       playAreaEl.hidden = true;
       resultsAreaEl.hidden = false;
 
-      const totalMeters = score * 10;
+      const totalMeters = score * METERS_PER_POINT;
       const listHtml = log
-        .map((entry) => `<li>${entry.q} — <strong>${entry.ans}</strong> (<em>+${entry.pts} pts / ${entry.pts * 10}m</em>)</li>`)
+        .map((entry) => `<li>${entry.q} — <strong>${entry.ans}</strong> (<em>+${entry.pts} pts / ${(entry.pts * METERS_PER_POINT).toLocaleString()}m</em>)</li>`)
         .join("");
 
       resultsAreaEl.innerHTML = `
