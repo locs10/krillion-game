@@ -7,8 +7,8 @@
   <style>
     :root {
       --bg: #071b26;
-      --card: rgba(14, 45, 63, 0.88);
-      --card-2: rgba(9, 32, 46, 0.9);
+      --card: rgba(14, 45, 63, 0.9);
+      --card-2: rgba(9, 32, 46, 0.92);
       --text: #eef8ff;
       --accent: #38bdf8;
       --accent-2: #22d3ee;
@@ -28,11 +28,10 @@
       padding: 1rem;
       overflow-x: hidden;
       background: linear-gradient(180deg, #0e4a6e 0%, #072638 45%, #03111a 80%, #01060a 100%);
-      transition: background-position 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
+      transition: background-position 1.2s cubic-bezier(0.22, 1, 0.36, 1);
       background-size: 100% 260%;
       background-position: 0% 0%;
     }
-
     .bubbles {
       position: fixed;
       inset: 0;
@@ -54,18 +53,16 @@
       85% { opacity: 0.55; }
       100% { transform: translateY(-110vh) translateX(18px) scale(1.1); opacity: 0; }
     }
-
     .layout {
       position: relative;
       z-index: 1;
       width: 100%;
       max-width: 700px;
       display: grid;
-      grid-template-columns: 68px 1fr;
+      grid-template-columns: 64px 1fr;
       gap: 0.85rem;
       align-items: stretch;
     }
-
     .depth-track {
       position: relative;
       background: linear-gradient(180deg, rgba(14,116,144,0.35) 0%, rgba(8,47,73,0.65) 55%, rgba(2,6,23,0.92) 100%);
@@ -76,8 +73,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      min-height: 410px;
-      box-shadow: inset 0 0 24px rgba(0,0,0,0.45);
+      min-height: 390px;
     }
     .zone-label {
       font-size: 0.62rem;
@@ -103,25 +99,21 @@
       top: 34px;
       left: 50%;
       transform: translate(-50%, 0);
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       line-height: 1;
       transition: top 1.15s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s ease;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
       z-index: 2;
     }
     .diver.sinking {
       transform: translate(-50%, 4px) scale(1.12);
     }
-
     .app {
       width: 100%;
       background: var(--card);
-      backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 18px;
       padding: 1.5rem;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .app.sink-pulse {
       animation: cardSink 0.95s cubic-bezier(0.22, 1, 0.36, 1);
@@ -131,7 +123,6 @@
       35% { transform: translateY(12px); }
       100% { transform: translateY(0); }
     }
-
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -205,9 +196,7 @@
       font-size: 1rem;
       outline: none;
     }
-    input:focus {
-      border-color: var(--accent);
-    }
+    input:focus { border-color: var(--accent); }
     button {
       padding: 0.8rem 1.15rem;
       border-radius: 12px;
@@ -218,10 +207,7 @@
       font-size: 0.95rem;
       cursor: pointer;
     }
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
     button.secondary {
       background: var(--card-2);
       color: var(--text);
@@ -236,29 +222,8 @@
     .ok { color: var(--ok); }
     .warn { color: var(--warn); }
     .bad { color: var(--bad); }
-    .summary ul {
-      padding-left: 1.2rem;
-      line-height: 1.6;
-    }
-    .summary-actions {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-
-    @media (max-width: 560px) {
-      .layout {
-        grid-template-columns: 52px 1fr;
-        gap: 0.6rem;
-      }
-      .app {
-        padding: 1.1rem;
-      }
-      .prompt {
-        font-size: 1.15rem;
-      }
-    }
+    .summary ul { padding-left: 1.2rem; line-height: 1.6; }
+    .summary-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -288,7 +253,7 @@
         <span class="category-tag" id="category-info">Category</span>
         <div class="prompt" id="prompt-text">Generating prompts...</div>
         <form id="answer-form">
-          <input id="answer-input" type="text" autocomplete="off" placeholder="Type a valid & rare answer..." required />
+          <input id="answer-input" type="text" autocomplete="off" placeholder="Type an English word matching the prompt..." required />
           <button type="submit" id="submit-btn">Dive</button>
         </form>
         <div class="feedback" id="feedback"></div>
@@ -299,109 +264,126 @@
   </div>
 
   <script>
-    (function createBubbles() {
-      const container = document.getElementById("bubbles");
-      for (let i = 0; i < 18; i++) {
-        const b = document.createElement("span");
-        b.className = "bubble";
-        const size = 6 + Math.random() * 14;
-        b.style.width = `${size}px`;
-        b.style.height = `${size}px`;
-        b.style.left = `${Math.random() * 100}%`;
-        b.style.animationDuration = `${7 + Math.random() * 9}s`;
-        b.style.animationDelay = `${-Math.random() * 10}s`;
-        container.appendChild(b);
-      }
-    })();
+    window.addEventListener("error", function (e) {
+      const p = document.getElementById("prompt-text");
+      if (p) p.textContent = "Error: " + (e.message || "Script failed to load");
+    });
 
-    const BANKS = {
-      Country: [
-        ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
-        ["Australia", 0.85], ["Italy", 0.84], ["Spain", 0.82], ["India", 0.86], ["Mexico", 0.83],
-        ["Argentina", 0.78], ["Egypt", 0.77], ["Norway", 0.72], ["Sweden", 0.70], ["Greece", 0.72],
-        ["Thailand", 0.68], ["Kenya", 0.64], ["Peru", 0.62], ["Chile", 0.63], ["Portugal", 0.65],
-        ["Ireland", 0.64], ["Poland", 0.60], ["Nigeria", 0.62], ["Morocco", 0.56], ["Vietnam", 0.58],
-        ["Colombia", 0.60], ["Iceland", 0.55], ["Finland", 0.54], ["Denmark", 0.55], ["Austria", 0.52],
-        ["Belgium", 0.53], ["Croatia", 0.45], ["Hungary", 0.44], ["Romania", 0.42], ["Jamaica", 0.50],
-        ["Cuba", 0.52], ["Nepal", 0.40], ["Mongolia", 0.35], ["Uruguay", 0.26], ["Ecuador", 0.34],
-        ["Bolivia", 0.32], ["Paraguay", 0.22], ["Estonia", 0.24], ["Latvia", 0.22], ["Lithuania", 0.23],
-        ["Slovenia", 0.22], ["Slovakia", 0.21], ["Bulgaria", 0.25], ["Serbia", 0.26], ["Georgia", 0.25],
-        ["Armenia", 0.20], ["Jordan", 0.28], ["Oman", 0.22], ["Qatar", 0.35], ["Kuwait", 0.26],
-        ["Bahrain", 0.18], ["Brunei", 0.14], ["Bhutan", 0.20], ["Guyana", 0.11], ["Suriname", 0.09],
-        ["Belize", 0.16], ["Fiji", 0.24], ["Samoa", 0.15], ["Tonga", 0.12], ["Malawi", 0.12],
-        ["Zambia", 0.14], ["Namibia", 0.16], ["Botswana", 0.15], ["Rwanda", 0.18], ["Uganda", 0.17],
-        ["Senegal", 0.16], ["Ghana", 0.25], ["Tunisia", 0.24], ["Algeria", 0.26], ["Lebanon", 0.25],
-        ["Cyprus", 0.22], ["Malta", 0.18], ["Luxembourg", 0.24], ["Liechtenstein", 0.08], ["Andorra", 0.10],
-        ["Monaco", 0.20], ["San Marino", 0.09], ["Maldives", 0.34], ["Mauritius", 0.16], ["Seychelles", 0.12]
-      ],
-      Animal: [
-        ["Dog", 0.95], ["Cat", 0.94], ["Lion", 0.90], ["Tiger", 0.89], ["Elephant", 0.88],
-        ["Bear", 0.85], ["Wolf", 0.84], ["Fox", 0.82], ["Shark", 0.83], ["Dolphin", 0.81],
-        ["Whale", 0.80], ["Eagle", 0.78], ["Owl", 0.76], ["Horse", 0.84], ["Cow", 0.82],
-        ["Pig", 0.79], ["Sheep", 0.75], ["Goat", 0.74], ["Deer", 0.73], ["Moose", 0.62],
-        ["Zebra", 0.75], ["Giraffe", 0.76], ["Kangaroo", 0.72], ["Koala", 0.70], ["Panda", 0.74],
-        ["Penguin", 0.77], ["Octopus", 0.68], ["Squid", 0.56], ["Crab", 0.62], ["Lobster", 0.58],
-        ["Cheetah", 0.66], ["Leopard", 0.64], ["Jaguar", 0.58], ["Panther", 0.60], ["Hyena", 0.54],
-        ["Badger", 0.44], ["Otter", 0.52], ["Beaver", 0.50], ["Raccoon", 0.55], ["Squirrel", 0.65],
-        ["Hedgehog", 0.48], ["Porcupine", 0.40], ["Armadillo", 0.34], ["Sloth", 0.50], ["Meerkat", 0.42],
-        ["Flamingo", 0.56], ["Pelican", 0.42], ["Toucan", 0.38], ["Albatross", 0.24], ["Narwhal", 0.30],
-        ["Manatee", 0.34], ["Walrus", 0.36], ["Wombat", 0.22], ["Platypus", 0.35], ["Axolotl", 0.32],
-        ["Chameleon", 0.42], ["Iguana", 0.44], ["Gecko", 0.40], ["Komodo Dragon", 0.26], ["Falcon", 0.45],
-        ["Hawk", 0.52], ["Vulture", 0.40], ["Swan", 0.50], ["Goose", 0.54], ["Duck", 0.68],
-        ["Crow", 0.55], ["Raven", 0.46], ["Magpie", 0.36], ["Starling", 0.24], ["Kingfisher", 0.22],
-        ["Ocelot", 0.14], ["Tapir", 0.12], ["Okapi", 0.11], ["Lemur", 0.36], ["Baboon", 0.38],
-        ["Gibbon", 0.18], ["Marmot", 0.14], ["Ferret", 0.34], ["Weasel", 0.26], ["Lynx", 0.30]
-      ],
-      Food: [
-        ["Pizza", 0.95], ["Burger", 0.92], ["Pasta", 0.90], ["Sushi", 0.88], ["Taco", 0.86],
-        ["Rice", 0.88], ["Bread", 0.87], ["Cheese", 0.89], ["Steak", 0.84], ["Soup", 0.83],
-        ["Salad", 0.82], ["Ramen", 0.78], ["Curry", 0.76], ["Dumpling", 0.66], ["Croissant", 0.72],
-        ["Waffle", 0.74], ["Pancake", 0.77], ["Omelette", 0.62], ["Lasagna", 0.68], ["Risotto", 0.54],
-        ["Falafel", 0.52], ["Hummus", 0.55], ["Paella", 0.46], ["Goulash", 0.30], ["Ceviche", 0.34],
-        ["Kimchi", 0.48], ["Pho", 0.46], ["Pierogi", 0.32], ["Empanada", 0.42], ["Baklava", 0.40],
-        ["Tiramisu", 0.48], ["Brownie", 0.70], ["Cookie", 0.80], ["Muffin", 0.68], ["Bagel", 0.66],
-        ["Pretzel", 0.62], ["Nachos", 0.70], ["Burrito", 0.74], ["Quesadilla", 0.62], ["Gumbo", 0.32],
-        ["Jambalaya", 0.30], ["Ratatouille", 0.36], ["Quiche", 0.38], ["Crepe", 0.45], ["Macaron", 0.44],
-        ["Churro", 0.48], ["Cannoli", 0.38], ["Gelato", 0.54], ["Sorbet", 0.42], ["Pudding", 0.52],
-        ["Apple", 0.92], ["Banana", 0.91], ["Orange", 0.89], ["Mango", 0.78], ["Strawberry", 0.82],
-        ["Blueberry", 0.72], ["Pineapple", 0.76], ["Peach", 0.68], ["Pear", 0.65], ["Cherry", 0.66],
-        ["Kiwi", 0.64], ["Papaya", 0.46], ["Guava", 0.36], ["Lychee", 0.28], ["Persimmon", 0.22],
-        ["Pomegranate", 0.44], ["Fig", 0.42], ["Date", 0.38], ["Apricot", 0.40], ["Plum", 0.50]
-      ],
-      "City & Place": [
-        ["London", 0.93], ["Paris", 0.92], ["Tokyo", 0.91], ["New York", 0.92], ["Rome", 0.86],
-        ["Berlin", 0.82], ["Madrid", 0.80], ["Sydney", 0.81], ["Toronto", 0.78], ["Chicago", 0.79],
-        ["Los Angeles", 0.83], ["San Francisco", 0.77], ["Miami", 0.75], ["Seoul", 0.74], ["Bangkok", 0.72],
-        ["Cairo", 0.73], ["Dubai", 0.76], ["Istanbul", 0.72], ["Amsterdam", 0.71], ["Vienna", 0.64],
-        ["Prague", 0.62], ["Lisbon", 0.60], ["Dublin", 0.61], ["Oslo", 0.55], ["Stockholm", 0.54],
-        ["Zurich", 0.54], ["Munich", 0.52], ["Barcelona", 0.68], ["Milan", 0.62], ["Venice", 0.66],
-        ["Florence", 0.58], ["Athens", 0.62], ["Warsaw", 0.48], ["Budapest", 0.50], ["Helsinki", 0.46],
-        ["Reykjavik", 0.48], ["Lima", 0.46], ["Bogota", 0.44], ["Santiago", 0.45], ["Buenos Aires", 0.56],
-        ["Kyoto", 0.58], ["Osaka", 0.50], ["Hanoi", 0.42], ["Taipei", 0.44], ["Jakarta", 0.42],
-        ["Nairobi", 0.44], ["Lagos", 0.42], ["Casablanca", 0.38], ["Marrakech", 0.40], ["Edinburgh", 0.52],
-        ["Glasgow", 0.42], ["Bristol", 0.36], ["Manchester", 0.45], ["Liverpool", 0.44], ["Belfast", 0.34],
-        ["Cardiff", 0.34], ["Galway", 0.26], ["Bergen", 0.24], ["Ghent", 0.20], ["Porto", 0.36],
-        ["Seville", 0.34], ["Valencia", 0.34], ["Bologna", 0.28], ["Salzburg", 0.30], ["Krakow", 0.34],
-        ["Tallinn", 0.24], ["Riga", 0.22], ["Vilnius", 0.21], ["Tbilisi", 0.20], ["Yerevan", 0.18]
-      ],
-      "Science & Nature": [
-        ["Oxygen", 0.88], ["Hydrogen", 0.85], ["Carbon", 0.86], ["Helium", 0.80], ["Nitrogen", 0.78],
-        ["Iron", 0.82], ["Gold", 0.86], ["Silver", 0.82], ["Copper", 0.74], ["Mercury", 0.72],
-        ["Uranium", 0.64], ["Silicon", 0.58], ["Neon", 0.62], ["Argon", 0.46], ["Lithium", 0.56],
-        ["Cobalt", 0.42], ["Nickel", 0.46], ["Titanium", 0.52], ["Platinum", 0.54], ["Zinc", 0.50],
-        ["Mars", 0.90], ["Jupiter", 0.86], ["Saturn", 0.84], ["Venus", 0.80], ["Neptune", 0.72],
-        ["Uranus", 0.70], ["Pluto", 0.76], ["Comet", 0.64], ["Asteroid", 0.62], ["Nebula", 0.50],
-        ["Quasar", 0.24], ["Pulsar", 0.22], ["Supernova", 0.54], ["Galaxy", 0.78], ["Orbit", 0.66],
-        ["Volcano", 0.80], ["Glacier", 0.70], ["Canyon", 0.68], ["Tundra", 0.52], ["Savanna", 0.54],
-        ["Lagoon", 0.48], ["Fjord", 0.42], ["Atoll", 0.22], ["Estuary", 0.26], ["Geyser", 0.44],
-        ["Basalt", 0.30], ["Granite", 0.56], ["Quartz", 0.54], ["Obsidian", 0.44], ["Emerald", 0.58]
-      ],
-      "Culture & Objects": [
-        ["Guitar", 0.90], ["Piano", 0.88], ["Violin", 0.82], ["Drums", 0.84], ["Flute", 0.72],
-        ["Trumpet", 0.70], ["Cello", 0.56], ["Harp", 0.54], ["Banjo", 0.44], ["Saxophone", 0.62],
-        ["Clarinet", 0.48], ["Ukulele", 0.52], ["Accordion", 0.42], ["Sitar", 0.24], ["Oboe", 0.28],
-        ["Compass", 0.72], ["Lantern", 0.66], ["Mirror", 0.78], ["Anchor", 0.68], ["Hammer", 0.76],
-        ["Wrench", 0.64], ["Candle", 0.75], ["Clock", 0.78], ["Map", 0.80], ["Crown", 0.72],
-        ["Shield", 0.70], ["Sword", 0.74], ["Helmet", 0.72], ["Prism", 0.46], ["Pendulum", 0.36],
-        ["Kaleidoscope", 0.32], ["Hourglass", 0.48], ["Sundial", 0.34], ["Sextant", 0.16], ["Astrolabe", 0.14],
-        ["Chess", 0.82], ["Origami", 0.56], ["Sculpture", 0.62], ["Mosaic", 0.44], ["Fresco", 0.28],
+    (function () {
+      try {
+        const container = document.getElementById("bubbles");
+        for (let i = 0; i < 16; i++) {
+          const b = document.createElement("span");
+          b.className = "bubble";
+          const size = 6 + Math.random() * 12;
+          b.style.width = size + "px";
+          b.style.height = size + "px";
+          b.style.left = (Math.random() * 100) + "%";
+          b.style.animationDuration = (7 + Math.random() * 8) + "s";
+          b.style.animationDelay = (-Math.random() * 10) + "s";
+          container.appendChild(b);
+        }
+
+        const BANKS = {
+          Country: [
+            ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
+            ["Australia", 0.85], ["Italy", 0.84], ["Spain", 0.82], ["India", 0.86], ["Mexico", 0.83],
+            ["Argentina", 0.78], ["Egypt", 0.77], ["Norway", 0.72], ["Sweden", 0.70], ["Greece", 0.72],
+            ["Thailand", 0.68], ["Kenya", 0.64], ["Peru", 0.62], ["Chile", 0.63], ["Portugal", 0.65],
+            ["Ireland", 0.64], ["Poland", 0.60], ["Nigeria", 0.62], ["Morocco", 0.56], ["Vietnam", 0.58],
+            ["Colombia", 0.60], ["Iceland", 0.55], ["Finland", 0.54], ["Denmark", 0.55], ["Austria", 0.52],
+            ["Belgium", 0.53], ["Croatia", 0.45], ["Hungary", 0.44], ["Romania", 0.42], ["Jamaica", 0.50],
+            ["Cuba", 0.52], ["Nepal", 0.40], ["Mongolia", 0.35], ["Uruguay", 0.26], ["Ecuador", 0.34],
+            ["Bolivia", 0.32], ["Paraguay", 0.22], ["Estonia", 0.24], ["Latvia", 0.22], ["Lithuania", 0.23],
+            ["Slovenia", 0.22], ["Slovakia", 0.21], ["Bulgaria", 0.25], ["Serbia", 0.26], ["Georgia", 0.25],
+            ["Armenia", 0.20], ["Jordan", 0.28], ["Oman", 0.22], ["Qatar", 0.35], ["Kuwait", 0.26],
+            ["Bahrain", 0.18], ["Brunei", 0.14], ["Bhutan", 0.20], ["Guyana", 0.11], ["Suriname", 0.09],
+            ["Belize", 0.16], ["Fiji", 0.24], ["Samoa", 0.15], ["Tonga", 0.12], ["Malawi", 0.12],
+            ["Zambia", 0.14], ["Namibia", 0.16], ["Botswana", 0.15], ["Rwanda", 0.18], ["Uganda", 0.17],
+            ["Senegal", 0.16], ["Ghana", 0.25], ["Tunisia", 0.24], ["Algeria", 0.26], ["Lebanon", 0.25],
+            ["Cyprus", 0.22], ["Malta", 0.18], ["Luxembourg", 0.24], ["Liechtenstein", 0.08], ["Andorra", 0.10],
+            ["Monaco", 0.20], ["San Marino", 0.09], ["Maldives", 0.34], ["Mauritius", 0.16], ["Seychelles", 0.12]
+          ],
+          Animal: [
+            ["Dog", 0.95], ["Cat", 0.94], ["Lion", 0.90], ["Tiger", 0.89], ["Elephant", 0.88],
+            ["Bear", 0.85], ["Wolf", 0.84], ["Fox", 0.82], ["Shark", 0.83], ["Dolphin", 0.81],
+            ["Whale", 0.80], ["Eagle", 0.78], ["Owl", 0.76], ["Horse", 0.84], ["Cow", 0.82],
+            ["Pig", 0.79], ["Sheep", 0.75], ["Goat", 0.74], ["Deer", 0.73], ["Moose", 0.62],
+            ["Zebra", 0.75], ["Giraffe", 0.76], ["Kangaroo", 0.72], ["Koala", 0.70], ["Panda", 0.74],
+            ["Penguin", 0.77], ["Octopus", 0.68], ["Squid", 0.56], ["Crab", 0.62], ["Lobster", 0.58],
+            ["Cheetah", 0.66], ["Leopard", 0.64], ["Jaguar", 0.58], ["Panther", 0.60], ["Hyena", 0.54],
+            ["Badger", 0.44], ["Otter", 0.52], ["Beaver", 0.50], ["Raccoon", 0.55], ["Squirrel", 0.65],
+            ["Hedgehog", 0.48], ["Porcupine", 0.40], ["Armadillo", 0.34], ["Sloth", 0.50], ["Meerkat", 0.42],
+            ["Flamingo", 0.56], ["Pelican", 0.42], ["Toucan", 0.38], ["Albatross", 0.24], ["Narwhal", 0.30],
+            ["Manatee", 0.34], ["Walrus", 0.36], ["Wombat", 0.22], ["Platypus", 0.35], ["Axolotl", 0.32],
+            ["Chameleon", 0.42], ["Iguana", 0.44], ["Gecko", 0.40], ["Komodo Dragon", 0.26], ["Falcon", 0.45],
+            ["Hawk", 0.52], ["Vulture", 0.40], ["Swan", 0.50], ["Goose", 0.54], ["Duck", 0.68],
+            ["Crow", 0.55], ["Raven", 0.46], ["Magpie", 0.36], ["Starling", 0.24], ["Kingfisher", 0.22],
+            ["Ocelot", 0.14], ["Tapir", 0.12], ["Okapi", 0.11], ["Lemur", 0.36], ["Baboon", 0.38],
+            ["Gibbon", 0.18], ["Marmot", 0.14], ["Ferret", 0.34], ["Weasel", 0.26], ["Lynx", 0.30]
+          ],
+          Food: [
+            ["Pizza", 0.95], ["Burger", 0.92], ["Pasta", 0.90], ["Sushi", 0.88], ["Taco", 0.86],
+            ["Rice", 0.88], ["Bread", 0.87], ["Cheese", 0.89], ["Steak", 0.84], ["Soup", 0.83],
+            ["Salad", 0.82], ["Ramen", 0.78], ["Curry", 0.76], ["Dumpling", 0.66], ["Croissant", 0.72],
+            ["Waffle", 0.74], ["Pancake", 0.77], ["Omelette", 0.62], ["Lasagna", 0.68], ["Risotto", 0.54],
+            ["Falafel", 0.52], ["Hummus", 0.55], ["Paella", 0.46], ["Goulash", 0.30], ["Ceviche", 0.34],
+            ["Kimchi", 0.48], ["Pho", 0.46], ["Pierogi", 0.32], ["Empanada", 0.42], ["Baklava", 0.40],
+            ["Tiramisu", 0.48], ["Brownie", 0.70], ["Cookie", 0.80], ["Muffin", 0.68], ["Bagel", 0.66],
+            ["Pretzel", 0.62], ["Nachos", 0.70], ["Burrito", 0.74], ["Quesadilla", 0.62], ["Gumbo", 0.32],
+            ["Jambalaya", 0.30], ["Ratatouille", 0.36], ["Quiche", 0.38], ["Crepe", 0.45], ["Macaron", 0.44],
+            ["Churro", 0.48], ["Cannoli", 0.38], ["Gelato", 0.54], ["Sorbet", 0.42], ["Pudding", 0.52],
+            ["Apple", 0.92], ["Banana", 0.91], ["Orange", 0.89], ["Mango", 0.78], ["Strawberry", 0.82],
+            ["Blueberry", 0.72], ["Pineapple", 0.76], ["Peach", 0.68], ["Pear", 0.65], ["Cherry", 0.66],
+            ["Kiwi", 0.64], ["Papaya", 0.46], ["Guava", 0.36], ["Lychee", 0.28], ["Persimmon", 0.22],
+            ["Pomegranate", 0.44], ["Fig", 0.42], ["Date", 0.38], ["Apricot", 0.40], ["Plum", 0.50]
+          ],
+          "City & Place": [
+            ["London", 0.93], ["Paris", 0.92], ["Tokyo", 0.91], ["New York", 0.92], ["Rome", 0.86],
+            ["Berlin", 0.82], ["Madrid", 0.80], ["Sydney", 0.81], ["Toronto", 0.78], ["Chicago", 0.79],
+            ["Los Angeles", 0.83], ["San Francisco", 0.77], ["Miami", 0.75], ["Seoul", 0.74], ["Bangkok", 0.72],
+            ["Cairo", 0.73], ["Dubai", 0.76], ["Istanbul", 0.72], ["Amsterdam", 0.71], ["Vienna", 0.64],
+            ["Prague", 0.62], ["Lisbon", 0.60], ["Dublin", 0.61], ["Oslo", 0.55], ["Stockholm", 0.54],
+            ["Zurich", 0.54], ["Munich", 0.52], ["Barcelona", 0.68], ["Milan", 0.62], ["Venice", 0.66],
+            ["Florence", 0.58], ["Athens", 0.62], ["Warsaw", 0.48], ["Budapest", 0.50], ["Helsinki", 0.46],
+            ["Reykjavik", 0.48], ["Lima", 0.46], ["Bogota", 0.44], ["Santiago", 0.45], ["Buenos Aires", 0.56],
+            ["Kyoto", 0.58], ["Osaka", 0.50], ["Hanoi", 0.42], ["Taipei", 0.44], ["Jakarta", 0.42],
+            ["Nairobi", 0.44], ["Lagos", 0.42], ["Casablanca", 0.38], ["Marrakech", 0.40], ["Edinburgh", 0.52],
+            ["Glasgow", 0.42], ["Bristol", 0.36], ["Manchester", 0.45], ["Liverpool", 0.44], ["Belfast", 0.34],
+            ["Cardiff", 0.34], ["Galway", 0.26], ["Bergen", 0.24], ["Ghent", 0.20], ["Porto", 0.36],
+            ["Seville", 0.34], ["Valencia", 0.34], ["Bologna", 0.28], ["Salzburg", 0.30], ["Krakow", 0.34],
+            ["Tallinn", 0.24], ["Riga", 0.22], ["Vilnius", 0.21], ["Tbilisi", 0.20], ["Yerevan", 0.18]
+          ],
+          "Science & Nature": [
+            ["Oxygen", 0.88], ["Hydrogen", 0.85], ["Carbon", 0.86], ["Helium", 0.80], ["Nitrogen", 0.78],
+            ["Iron", 0.82], ["Gold", 0.86], ["Silver", 0.82], ["Copper", 0.74], ["Mercury", 0.72],
+            ["Uranium", 0.64], ["Silicon", 0.58], ["Neon", 0.62], ["Argon", 0.46], ["Lithium", 0.56],
+            ["Cobalt", 0.42], ["Nickel", 0.46], ["Titanium", 0.52], ["Platinum", 0.54], ["Zinc", 0.50],
+            ["Mars", 0.90], ["Jupiter", 0.86], ["Saturn", 0.84], ["Venus", 0.80], ["Neptune", 0.72],
+            ["Uranus", 0.70], ["Pluto", 0.76], ["Comet", 0.64], ["Asteroid", 0.62], ["Nebula", 0.50],
+            ["Quasar", 0.24], ["Pulsar", 0.22], ["Supernova", 0.54], ["Galaxy", 0.78], ["Orbit", 0.66],
+            ["Volcano", 0.80], ["Glacier", 0.70], ["Canyon", 0.68], ["Tundra", 0.52], ["Savanna", 0.54],
+            ["Lagoon", 0.48], ["Fjord", 0.42], ["Atoll", 0.22], ["Estuary", 0.26], ["Geyser", 0.44],
+            ["Basalt", 0.30], ["Granite", 0.56], ["Quartz", 0.54], ["Obsidian", 0.44], ["Emerald", 0.58]
+          ],
+          "Culture & Objects": [
+            ["Guitar", 0.90], ["Piano", 0.88], ["Violin", 0.82], ["Drums", 0.84], ["Flute", 0.72],
+            ["Trumpet", 0.70], ["Cello", 0.56], ["Harp", 0.54], ["Banjo", 0.44], ["Saxophone", 0.62],
+            ["Clarinet", 0.48], ["Ukulele", 0.52], ["Accordion", 0.42], ["Sitar", 0.24], ["Oboe", 0.28],
+            ["Compass", 0.72], ["Lantern", 0.66], ["Mirror", 0.78], ["Anchor", 0.68], ["Hammer", 0.76],
+            ["Wrench", 0.64], ["Candle", 0.75], ["Clock", 0.78], ["Map", 0.80], ["Crown", 0.72],
+            ["Shield", 0.70], ["Sword", 0.74], ["Helmet", 0.72], ["Prism", 0.46], ["Pendulum", 0.36],
+            ["Kaleidoscope", 0.32], ["Hourglass", 0.48], ["Sundial", 0.34], ["Sextant", 0.16], ["Astrolabe", 0.14],
+            ["Chess", 0.82], ["Origami", 0.56], ["Sculpture", 0.62], ["Mosaic", 0.44], ["Fresco", 0.28],
+            ["Sonnet", 0.40], ["Haiku", 0.52], ["Ballad", 0.38], ["Fable", 0.44], ["Myth", 0.64]
+          ]
+        };
+
+        const KNOWN_CATEGORY_BY_ITEM = new Map();
+        for (const [cat, items] of Object.entries(BANKS)) {
+          for (const [name, pop] of items) {
+            const clean = name.trim().toLowerCase().replace(/\s+/g, " ");
+            KNOWN_CATEGORY_BY_ITEM.set(clean, { category: cat, pop: pop });
+            const plural = clean.endsWith("s") ? clean : clean + "s";
+            if (!KNOWN_CATEGORY_BY_ITEM.has(plural)) {
+              KNOWN_CATEGORY_BY_ITEM.set(plural,
