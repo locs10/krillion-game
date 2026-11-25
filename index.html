@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Krillion — 100x Extreme Abyssal Plunge</title>
+  <title>Krillion — Real-Life Abyssal Dive</title>
   <style>
     :root {
-      --card: rgba(6, 24, 36, 0.86);
-      --card-2: rgba(3, 14, 22, 0.92);
+      --card: rgba(6, 24, 36, 0.88);
+      --card-2: rgba(3, 14, 22, 0.94);
       --text: #f0f9ff;
       --muted: #9bc4dc;
       --accent: #38bdf8;
@@ -32,7 +32,6 @@
       background: #010408;
     }
 
-    /* 250-screen tall ocean column for extreme 100x visual descent */
     .ocean-world {
       position: fixed;
       inset: 0;
@@ -98,7 +97,6 @@
       50% { transform: translateX(3.5%) translateY(6px); }
     }
 
-    /* Hundreds of depth lines & landmarks whipping upward past the camera */
     .depth-marker {
       position: absolute;
       left: 1rem;
@@ -130,7 +128,6 @@
       background: linear-gradient(90deg, rgba(34, 211, 238, 0.65), rgba(34, 211, 238, 0.05));
     }
 
-    /* High-speed upward water streaks during freefall */
     .rush-lines {
       position: fixed;
       inset: 0;
@@ -141,9 +138,7 @@
       transition: opacity 0.25s ease;
     }
 
-    .rush-lines.active {
-      opacity: 1;
-    }
+    .rush-lines.active { opacity: 1; }
 
     .streak {
       position: absolute;
@@ -177,9 +172,7 @@
       animation: riseBubble linear infinite;
     }
 
-    .bubbles.turbo .bubble {
-      animation-duration: 0.75s !important;
-    }
+    .bubbles.turbo .bubble { animation-duration: 0.75s !important; }
 
     @keyframes riseBubble {
       0% { transform: translateY(0) translateX(0); opacity: 0; }
@@ -188,7 +181,6 @@
       100% { transform: translateY(-115vh) translateX(14px); opacity: 0; }
     }
 
-    /* Foreground UI stage that physically drops dramatically on every dive */
     .ui-shell {
       position: relative;
       z-index: 2;
@@ -211,9 +203,7 @@
       will-change: transform;
     }
 
-    .wrap.rumble {
-      animation: abyssRumble 0.55s ease-in-out;
-    }
+    .wrap.rumble { animation: abyssRumble 0.55s ease-in-out; }
 
     @keyframes abyssRumble {
       0%, 100% { margin-left: 0px; }
@@ -382,9 +372,32 @@
       border: 1px solid rgba(255,255,255,0.18);
     }
 
+    .suggestion-box {
+      margin-top: 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+      color: var(--warn);
+    }
+
+    .suggestion-btn {
+      padding: 0.32rem 0.72rem;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      background: rgba(251, 191, 36, 0.16);
+      color: #fde68a;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+    }
+
+    .suggestion-btn:hover {
+      background: rgba(251, 191, 36, 0.28);
+    }
+
     .msg {
-      margin-top: 0.95rem;
-      min-height: 2.6rem;
+      margin-top: 0.85rem;
+      min-height: 2.4rem;
       line-height: 1.45;
       font-size: 0.95rem;
     }
@@ -436,7 +449,7 @@
 
         <div class="stats">
           <div class="stat"><small>Round</small><strong id="round-val">1 / 7</strong></div>
-          <div class="stat"><small>Timer</small><strong id="timer-val">25s</strong></div>
+          <div class="stat"><small>Timer</small><strong id="timer-val">30s</strong></div>
           <div class="stat"><small>Depth</small><strong id="depth-val">0m</strong></div>
         </div>
 
@@ -444,9 +457,10 @@
           <div class="cat" id="cat-val">Category</div>
           <div class="question" id="question-val">Loading...</div>
           <form id="guess-form">
-            <input id="guess-input" type="text" autocomplete="off" placeholder="Type an English word or phrase..." required />
+            <input id="guess-input" type="text" autocomplete="off" placeholder="Type a real-life answer..." required />
             <button type="submit" id="guess-btn">Dive</button>
           </form>
+          <div class="suggestion-box" id="suggestion-box" hidden></div>
           <div class="msg" id="msg-val"></div>
         </div>
 
@@ -456,7 +470,6 @@
   </div>
 
   <script>
-    // Populate 250-screen ocean column with rapid-fire depth markers every ~1% so you feel 100x speed
     (function populateOceanMarkers() {
       const col = document.getElementById("ocean-column");
       const landmarks = {
@@ -488,220 +501,205 @@
       }
     })();
 
-    const ITEMS = {
-      Country: [
-        ["Brazil", 0.92], ["Canada", 0.90], ["Japan", 0.90], ["France", 0.88], ["Germany", 0.86],
-        ["Australia", 0.85], ["Italy", 0.84], ["Spain", 0.82], ["India", 0.86], ["Mexico", 0.83],
-        ["Argentina", 0.78], ["Egypt", 0.77], ["Norway", 0.72], ["Sweden", 0.70], ["Greece", 0.72],
-        ["Thailand", 0.68], ["Kenya", 0.64], ["Peru", 0.62], ["Chile", 0.63], ["Portugal", 0.65],
-        ["Ireland", 0.64], ["Poland", 0.60], ["Nigeria", 0.62], ["Morocco", 0.56], ["Vietnam", 0.58],
-        ["Colombia", 0.60], ["Iceland", 0.55], ["Finland", 0.54], ["Denmark", 0.55], ["Austria", 0.52],
-        ["Belgium", 0.53], ["Croatia", 0.45], ["Hungary", 0.44], ["Romania", 0.42], ["Jamaica", 0.50],
-        ["Cuba", 0.52], ["Nepal", 0.40], ["Mongolia", 0.35], ["Uruguay", 0.26], ["Ecuador", 0.34],
-        ["Bolivia", 0.32], ["Paraguay", 0.22], ["Estonia", 0.24], ["Latvia", 0.22], ["Lithuania", 0.23],
-        ["Slovenia", 0.22], ["Slovakia", 0.21], ["Bulgaria", 0.25], ["Serbia", 0.26], ["Georgia", 0.25],
-        ["Armenia", 0.20], ["Jordan", 0.28], ["Oman", 0.22], ["Qatar", 0.35], ["Kuwait", 0.26],
-        ["Bahrain", 0.18], ["Brunei", 0.14], ["Bhutan", 0.20], ["Guyana", 0.11], ["Suriname", 0.09],
-        ["Belize", 0.16], ["Fiji", 0.24], ["Samoa", 0.15], ["Tonga", 0.12], ["Malawi", 0.12],
-        ["Zambia", 0.14], ["Namibia", 0.16], ["Botswana", 0.15], ["Rwanda", 0.18], ["Uganda", 0.17],
-        ["Senegal", 0.16], ["Ghana", 0.25], ["Tunisia", 0.24], ["Algeria", 0.26], ["Lebanon", 0.25],
-        ["Cyprus", 0.22], ["Malta", 0.18], ["Luxembourg", 0.24], ["Liechtenstein", 0.08], ["Andorra", 0.10],
-        ["Monaco", 0.20], ["San Marino", 0.09], ["Maldives", 0.34], ["Mauritius", 0.16], ["Seychelles", 0.12],
-        ["Kyrgyzstan", 0.07], ["Tajikistan", 0.07], ["Turkmenistan", 0.06], ["Djibouti", 0.08], ["Comoros", 0.06],
-        ["Kiribati", 0.05], ["Tuvalu", 0.05], ["Nauru", 0.04], ["Vanuatu", 0.08], ["Lesotho", 0.07]
-      ],
-      Animal: [
-        ["Dog", 0.95], ["Cat", 0.94], ["Lion", 0.90], ["Tiger", 0.89], ["Elephant", 0.88],
-        ["Bear", 0.85], ["Wolf", 0.84], ["Fox", 0.82], ["Shark", 0.83], ["Dolphin", 0.81],
-        ["Whale", 0.80], ["Eagle", 0.78], ["Owl", 0.76], ["Horse", 0.84], ["Cow", 0.82],
-        ["Pig", 0.79], ["Sheep", 0.75], ["Goat", 0.74], ["Deer", 0.73], ["Moose", 0.62],
-        ["Zebra", 0.75], ["Giraffe", 0.76], ["Kangaroo", 0.72], ["Koala", 0.70], ["Panda", 0.74],
-        ["Penguin", 0.77], ["Octopus", 0.68], ["Squid", 0.56], ["Crab", 0.62], ["Lobster", 0.58],
-        ["Cheetah", 0.66], ["Leopard", 0.64], ["Jaguar", 0.58], ["Panther", 0.60], ["Hyena", 0.54],
-        ["Badger", 0.44], ["Otter", 0.52], ["Beaver", 0.50], ["Raccoon", 0.55], ["Squirrel", 0.65],
-        ["Hedgehog", 0.48], ["Porcupine", 0.40], ["Armadillo", 0.34], ["Sloth", 0.50], ["Meerkat", 0.42],
-        ["Flamingo", 0.56], ["Pelican", 0.42], ["Toucan", 0.38], ["Albatross", 0.24], ["Narwhal", 0.30],
-        ["Manatee", 0.34], ["Walrus", 0.36], ["Wombat", 0.22], ["Platypus", 0.35], ["Axolotl", 0.32],
-        ["Chameleon", 0.42], ["Iguana", 0.44], ["Gecko", 0.40], ["Komodo Dragon", 0.26], ["Falcon", 0.45],
-        ["Hawk", 0.52], ["Vulture", 0.40], ["Swan", 0.50], ["Goose", 0.54], ["Duck", 0.68],
-        ["Crow", 0.55], ["Raven", 0.46], ["Magpie", 0.36], ["Starling", 0.24], ["Kingfisher", 0.22],
-        ["Ocelot", 0.14], ["Tapir", 0.12], ["Okapi", 0.11], ["Lemur", 0.36], ["Baboon", 0.38],
-        ["Gibbon", 0.18], ["Marmot", 0.14], ["Ferret", 0.34], ["Weasel", 0.26], ["Lynx", 0.30],
-        ["Quokka", 0.16], ["Capybara", 0.48], ["Pangolin", 0.22], ["Fossa", 0.07], ["Saiga", 0.05],
-        ["Binturong", 0.06], ["Aye-aye", 0.09], ["Dugong", 0.12], ["Cassowary", 0.18], ["Shoebill", 0.16]
-      ],
-      Food: [
-        ["Pizza", 0.95], ["Burger", 0.92], ["Pasta", 0.90], ["Sushi", 0.88], ["Taco", 0.86],
-        ["Rice", 0.88], ["Bread", 0.87], ["Cheese", 0.89], ["Steak", 0.84], ["Soup", 0.83],
-        ["Salad", 0.82], ["Ramen", 0.78], ["Curry", 0.76], ["Dumpling", 0.66], ["Croissant", 0.72],
-        ["Waffle", 0.74], ["Pancake", 0.77], ["Omelette", 0.62], ["Lasagna", 0.68], ["Risotto", 0.54],
-        ["Falafel", 0.52], ["Hummus", 0.55], ["Paella", 0.46], ["Goulash", 0.30], ["Ceviche", 0.34],
-        ["Kimchi", 0.48], ["Pho", 0.46], ["Pierogi", 0.32], ["Empanada", 0.42], ["Baklava", 0.40],
-        ["Tiramisu", 0.48], ["Brownie", 0.70], ["Cookie", 0.80], ["Muffin", 0.68], ["Bagel", 0.66],
-        ["Pretzel", 0.62], ["Nachos", 0.70], ["Burrito", 0.74], ["Quesadilla", 0.62], ["Gumbo", 0.32],
-        ["Jambalaya", 0.30], ["Ratatouille", 0.36], ["Quiche", 0.38], ["Crepe", 0.45], ["Macaron", 0.44],
-        ["Churro", 0.48], ["Cannoli", 0.38], ["Gelato", 0.54], ["Sorbet", 0.42], ["Pudding", 0.52],
-        ["Apple", 0.92], ["Banana", 0.91], ["Orange", 0.89], ["Mango", 0.78], ["Strawberry", 0.82],
-        ["Blueberry", 0.72], ["Pineapple", 0.76], ["Peach", 0.68], ["Pear", 0.65], ["Cherry", 0.66],
-        ["Kiwi", 0.64], ["Papaya", 0.46], ["Guava", 0.36], ["Lychee", 0.28], ["Persimmon", 0.22],
-        ["Pomegranate", 0.44], ["Fig", 0.42], ["Date", 0.38], ["Apricot", 0.40], ["Plum", 0.50],
-        ["Kohlrabi", 0.08], ["Salsify", 0.05], ["Durian", 0.42], ["Rambutan", 0.16], ["Feijoa", 0.07],
-        ["Jollof", 0.36], ["Shakshuka", 0.28], ["Pozole", 0.20], ["Tempeh", 0.24], ["Miso", 0.46]
-      ],
-      "City & Place": [
-        ["London", 0.93], ["Paris", 0.92], ["Tokyo", 0.91], ["New York", 0.92], ["Rome", 0.86],
-        ["Berlin", 0.82], ["Madrid", 0.80], ["Sydney", 0.81], ["Toronto", 0.78], ["Chicago", 0.79],
-        ["Los Angeles", 0.83], ["San Francisco", 0.77], ["Miami", 0.75], ["Seoul", 0.74], ["Bangkok", 0.72],
-        ["Cairo", 0.73], ["Dubai", 0.76], ["Istanbul", 0.72], ["Amsterdam", 0.71], ["Vienna", 0.64],
-        ["Prague", 0.62], ["Lisbon", 0.60], ["Dublin", 0.61], ["Oslo", 0.55], ["Stockholm", 0.54],
-        ["Zurich", 0.54], ["Munich", 0.52], ["Barcelona", 0.68], ["Milan", 0.62], ["Venice", 0.66],
-        ["Florence", 0.58], ["Athens", 0.62], ["Warsaw", 0.48], ["Budapest", 0.50], ["Helsinki", 0.46],
-        ["Reykjavik", 0.48], ["Lima", 0.46], ["Bogota", 0.44], ["Santiago", 0.45], ["Buenos Aires", 0.56],
-        ["Kyoto", 0.58], ["Osaka", 0.50], ["Hanoi", 0.42], ["Taipei", 0.44], ["Jakarta", 0.42],
-        ["Nairobi", 0.44], ["Lagos", 0.42], ["Casablanca", 0.38], ["Marrakech", 0.40], ["Edinburgh", 0.52],
-        ["Glasgow", 0.42], ["Bristol", 0.36], ["Manchester", 0.45], ["Liverpool", 0.44], ["Belfast", 0.34],
-        ["Cardiff", 0.34], ["Galway", 0.26], ["Bergen", 0.24], ["Ghent", 0.20], ["Porto", 0.36],
-        ["Seville", 0.34], ["Valencia", 0.34], ["Bologna", 0.28], ["Salzburg", 0.30], ["Krakow", 0.34],
-        ["Tallinn", 0.24], ["Riga", 0.22], ["Vilnius", 0.21], ["Tbilisi", 0.20], ["Yerevan", 0.18],
-        ["Timbuktu", 0.26], ["Ulaanbaatar", 0.16], ["Baku", 0.18], ["Almaty", 0.15], ["Samarkand", 0.14],
-        ["Valparaiso", 0.12], ["Cusco", 0.25], ["Arequipa", 0.10], ["Gdańsk", 0.14], ["Ljubljana", 0.16]
-      ],
-      "Science & Nature": [
-        ["Oxygen", 0.88], ["Hydrogen", 0.85], ["Carbon", 0.86], ["Helium", 0.80], ["Nitrogen", 0.78],
-        ["Iron", 0.82], ["Gold", 0.86], ["Silver", 0.82], ["Copper", 0.74], ["Mercury", 0.72],
-        ["Uranium", 0.64], ["Silicon", 0.58], ["Neon", 0.62], ["Argon", 0.46], ["Lithium", 0.56],
-        ["Cobalt", 0.42], ["Nickel", 0.46], ["Titanium", 0.52], ["Platinum", 0.54], ["Zinc", 0.50],
-        ["Mars", 0.90], ["Jupiter", 0.86], ["Saturn", 0.84], ["Venus", 0.80], ["Neptune", 0.72],
-        ["Uranus", 0.70], ["Pluto", 0.76], ["Comet", 0.64], ["Asteroid", 0.62], ["Nebula", 0.50],
-        ["Quasar", 0.24], ["Pulsar", 0.22], ["Supernova", 0.54], ["Galaxy", 0.78], ["Orbit", 0.66],
-        ["Volcano", 0.80], ["Glacier", 0.70], ["Canyon", 0.68], ["Tundra", 0.52], ["Savanna", 0.54],
-        ["Lagoon", 0.48], ["Fjord", 0.42], ["Atoll", 0.22], ["Estuary", 0.26], ["Geyser", 0.44],
-        ["Basalt", 0.30], ["Granite", 0.56], ["Quartz", 0.54], ["Obsidian", 0.44], ["Emerald", 0.58],
-        ["Magnetar", 0.11], ["Allotrope", 0.07], ["Permafrost", 0.34], ["Thermocline", 0.08], ["Geode", 0.36],
-        ["Dolomite", 0.14], ["Beryllium", 0.12], ["Bismuth", 0.24], ["Osmium", 0.10], ["Tardigrade", 0.32]
-      ],
-      "Niche & Culture": [
-        ["Guitar", 0.90], ["Piano", 0.88], ["Violin", 0.82], ["Drums", 0.84], ["Flute", 0.72],
-        ["Trumpet", 0.70], ["Cello", 0.56], ["Harp", 0.54], ["Banjo", 0.44], ["Saxophone", 0.62],
-        ["Clarinet", 0.48], ["Ukulele", 0.52], ["Accordion", 0.42], ["Sitar", 0.24], ["Oboe", 0.28],
-        ["Compass", 0.72], ["Lantern", 0.66], ["Mirror", 0.78], ["Anchor", 0.68], ["Hammer", 0.76],
-        ["Wrench", 0.64], ["Candle", 0.75], ["Clock", 0.78], ["Map", 0.80], ["Crown", 0.72],
-        ["Shield", 0.70], ["Sword", 0.74], ["Helmet", 0.72], ["Prism", 0.46], ["Pendulum", 0.36],
-        ["Kaleidoscope", 0.32], ["Hourglass", 0.48], ["Sundial", 0.34], ["Sextant", 0.16], ["Astrolabe", 0.14],
-        ["Chess", 0.82], ["Origami", 0.56], ["Sculpture", 0.62], ["Mosaic", 0.44], ["Fresco", 0.28],
-        ["Sonnet", 0.40], ["Haiku", 0.52], ["Ballad", 0.38], ["Fable", 0.44], ["Myth", 0.64],
-        ["Theremin", 0.18], ["Hurdy-gurdy", 0.08], ["Calipers", 0.14], ["Palimpsest", 0.06], ["Labyrinth", 0.46],
-        ["Ziggurat", 0.12], ["Obelisk", 0.34], ["Gargoyle", 0.42], ["Trebuchet", 0.26], ["Calligraphy", 0.54]
-      ]
-    };
-
-    const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    const CATEGORY_LOOKUP = new Map();
-
-    for (const [cat, list] of Object.entries(ITEMS)) {
-      for (const [name, pop] of list) {
-        const clean = name.trim().toLowerCase().replace(/\s+/g, " ");
-        CATEGORY_LOOKUP.set(clean, { category: cat, pop });
-        const plural = clean.endsWith("s") ? clean : `${clean}s`;
-        if (!CATEGORY_LOOKUP.has(plural)) {
-          CATEGORY_LOOKUP.set(plural, { category: cat, pop: Math.min(0.95, pop + 0.04) });
-        }
+    // Real-life Krillion-style prompts & everyday human answers with popularity scores
+    const REAL_LIFE_PROMPTS = [
+      {
+        category: "Everyday Life",
+        question: "Something you find in a kitchen junk drawer",
+        answers: [
+          ["batteries", 0.94], ["scissors", 0.90], ["tape", 0.88], ["rubber bands", 0.85], ["pens", 0.86],
+          ["takeout menus", 0.74], ["soy sauce packets", 0.68], ["screwdriver", 0.72], ["matches", 0.62],
+          ["super glue", 0.66], ["keys", 0.70], ["candles", 0.64], ["paperclips", 0.60], ["chargers", 0.75],
+          ["receipts", 0.65], ["twist ties", 0.48], ["allen wrench", 0.34], ["birthday candles", 0.52],
+          ["coupons", 0.56], ["measuring tape", 0.54], ["bottle opener", 0.62], ["chip clips", 0.46],
+          ["mystery key", 0.24], ["bread tags", 0.16], ["manual", 0.28], ["flashlight", 0.58],
+          ["thimble", 0.08], ["twine", 0.18], ["magnet", 0.44], ["dead battery", 0.32]
+        ]
+      },
+      {
+        category: "Social Habits",
+        question: "An excuse for being late to work or plans",
+        answers: [
+          ["traffic", 0.96], ["overslept", 0.90], ["alarm didn't go off", 0.88], ["train delay", 0.82],
+          ["flat tire", 0.78], ["car trouble", 0.80], ["doctor appointment", 0.72], ["lost my keys", 0.68],
+          ["sick", 0.76], ["weather", 0.64], ["bus was late", 0.74], ["childcare", 0.56],
+          ["family emergency", 0.66], ["dog threw up", 0.34], ["locked out", 0.48], ["wrong time", 0.52],
+          ["food poisoning", 0.60], ["dentist", 0.54], ["dead battery", 0.58], ["roadwork", 0.44],
+          ["migraine", 0.50], ["stuck in elevator", 0.14], ["bird poop", 0.09], ["wardrobe malfunction", 0.24],
+          ["lost wallet", 0.46], ["spilled coffee", 0.38], ["police", 0.30], ["power outage", 0.36]
+        ]
+      },
+      {
+        category: "Modern Life",
+        question: "Something people pretend to understand",
+        answers: [
+          ["taxes", 0.92], ["crypto", 0.88], ["stock market", 0.86], ["quantum physics", 0.82],
+          ["wine", 0.76], ["art", 0.74], ["politics", 0.80], ["insurance", 0.78], ["mortgages", 0.70],
+          ["ai", 0.84], ["blockchain", 0.72], ["economics", 0.68], ["terms and conditions", 0.64],
+          ["classical music", 0.44], ["chess", 0.52], ["cars", 0.62], ["credit score", 0.66],
+          ["inflation", 0.70], ["opera", 0.34], ["astrology", 0.48], ["philosophy", 0.46],
+          ["offside rule", 0.42], ["sourdough", 0.24], ["jazz", 0.38], ["cloud computing", 0.50],
+          ["hedge funds", 0.36], ["nihilism", 0.18], ["cricket rules", 0.28], ["fine dining", 0.32]
+        ]
+      },
+      {
+        category: "Everyday Life",
+        question: "Something you lose all the time",
+        answers: [
+          ["keys", 0.96], ["phone", 0.94], ["wallet", 0.90], ["sunglasses", 0.84], ["socks", 0.86],
+          ["chapstick", 0.78], ["pen", 0.82], ["remote", 0.85], ["earbuds", 0.80], ["charger", 0.76],
+          ["umbrella", 0.74], ["hair ties", 0.72], ["lighter", 0.68], ["glasses", 0.79], ["water bottle", 0.66],
+          ["guitar pick", 0.34], ["tupperware lid", 0.52], ["earring", 0.56], ["glove", 0.60],
+          ["watch", 0.58], ["passport", 0.48], ["id", 0.62], ["airpods", 0.78], ["lip balm", 0.74],
+          ["nail clippers", 0.30], ["sd card", 0.18], ["thimble", 0.08], ["bobby pins", 0.54]
+        ]
+      },
+      {
+        category: "Food & Drink",
+        question: "A controversial pizza topping",
+        answers: [
+          ["pineapple", 0.97], ["anchovies", 0.92], ["mushrooms", 0.80], ["olives", 0.78], ["broccoli", 0.64],
+          ["corn", 0.60], ["tuna", 0.54], ["egg", 0.50], ["banana", 0.36], ["kiwi", 0.22],
+          ["mayonnaise", 0.34], ["pickles", 0.48], ["jalapenos", 0.66], ["spinach", 0.58], ["artichoke", 0.52],
+          ["bbq chicken", 0.62], ["ham", 0.70], ["onions", 0.72], ["peppers", 0.68], ["blue cheese", 0.46],
+          ["figs", 0.26], ["peas", 0.24], ["french fries", 0.40], ["hot dogs", 0.38], ["strawberries", 0.14],
+          ["chocolate", 0.28], ["capers", 0.32], ["brussels sprouts", 0.20], ["watermelon", 0.10]
+        ]
+      },
+      {
+        category: "Travel & Hotels",
+        question: "Something you see at a hotel breakfast buffet",
+        answers: [
+          ["scrambled eggs", 0.94], ["bacon", 0.92], ["waffles", 0.88], ["pancakes", 0.86], ["toast", 0.85],
+          ["cereal", 0.84], ["coffee", 0.90], ["orange juice", 0.87], ["croissants", 0.78], ["fruit salad", 0.76],
+          ["yogurt", 0.74], ["sausages", 0.82], ["hash browns", 0.75], ["bagels", 0.72], ["muffins", 0.70],
+          ["oatmeal", 0.64], ["bananas", 0.68], ["jam", 0.62], ["butter", 0.66], ["tea", 0.72],
+          ["boiled eggs", 0.56], ["beans", 0.58], ["mushrooms", 0.52], ["tomatoes", 0.50], ["danish", 0.46],
+          ["mini cereal boxes", 0.34], ["waffle maker", 0.42], ["watery juice", 0.22], ["cold toast", 0.26],
+          ["melon", 0.44], ["ham", 0.60], ["cheese slices", 0.54]
+        ]
+      },
+      {
+        category: "Pet Peeves",
+        question: "A sound that immediately annoys people",
+        answers: [
+          ["nails on a chalkboard", 0.94], ["chewing", 0.90], ["snoring", 0.88], ["alarm clock", 0.86],
+          ["crying baby", 0.85], ["car alarm", 0.82], ["mosquitos", 0.78], ["fork scraping plate", 0.80],
+          ["pen clicking", 0.74], ["slurping", 0.76], ["barking dog", 0.79], ["drill", 0.70],
+          ["leaf blower", 0.66], ["styrofoam", 0.62], ["knuckle cracking", 0.64], ["siren", 0.72],
+          ["tapping", 0.60], ["whistling", 0.56], ["hiccups", 0.48], ["static", 0.44],
+          ["feedback", 0.42], ["drip", 0.54], ["dripping faucet", 0.58], ["teeth grinding", 0.46],
+          ["loud breathing", 0.52], ["smoke detector beep", 0.68], ["velcro", 0.24], ["tin foil", 0.28]
+        ]
+      },
+      {
+        category: "Human Nature",
+        question: "A harmless lie almost everyone tells",
+        answers: [
+          ["i'm fine", 0.95], ["on my way", 0.92], ["i read the terms", 0.86], ["i'm five minutes away", 0.88],
+          ["i didn't see your text", 0.82], ["i'm busy", 0.80], ["looks great", 0.78], ["i'll start tomorrow", 0.74],
+          ["i'm not tired", 0.72], ["i know", 0.76], ["good to see you", 0.70], ["i was just about to call", 0.66],
+          ["my phone died", 0.68], ["i'm listening", 0.74], ["i'll call you back", 0.64], ["i'm almost done", 0.62],
+          ["it's fine", 0.84], ["no problem", 0.78], ["i love it", 0.70], ["i'm good", 0.86],
+          ["just looking", 0.58], ["i'll think about it", 0.54], ["i'm allergic", 0.28], ["didn't hear my alarm", 0.52],
+          ["my wifi cut out", 0.48], ["i forgot", 0.76], ["one more episode", 0.44]
+        ]
+      },
+      {
+        category: "Weekend & Leisure",
+        question: "Something people bring to the beach",
+        answers: [
+          ["towel", 0.96], ["sunscreen", 0.95], ["sunglasses", 0.90], ["umbrella", 0.86], ["swimsuit", 0.88],
+          ["cooler", 0.80], ["flip flops", 0.82], ["hat", 0.84], ["book", 0.76], ["water", 0.85],
+          ["snacks", 0.78], ["beach ball", 0.70], ["chair", 0.74], ["bucket", 0.66], ["spade", 0.60],
+          ["frisbee", 0.62], ["speaker", 0.58], ["volleyball", 0.56], ["goggles", 0.54], ["snorkel", 0.50],
+          ["surfboard", 0.52], ["floatie", 0.48], ["sandwiches", 0.64], ["camera", 0.55], ["ice", 0.60],
+          ["aloe vera", 0.36], ["metal detector", 0.14], ["kite", 0.42], ["paddleboard", 0.34], ["kindle", 0.38]
+        ]
+      },
+      {
+        category: "Childhood & School",
+        question: "Something you remember from school classrooms",
+        answers: [
+          ["chalkboard", 0.92], ["whiteboard", 0.90], ["desk", 0.94], ["pencil", 0.93], ["globe", 0.78],
+          ["projector", 0.76], ["ruler", 0.82], ["eraser", 0.84], ["clock", 0.80], ["map", 0.79],
+          ["backpack", 0.86], ["textbook", 0.85], ["binder", 0.72], ["glue stick", 0.70], ["scissors", 0.75],
+          ["crayons", 0.77], ["markers", 0.74], ["locker", 0.81], ["calculator", 0.76], ["stapler", 0.64],
+          ["pencil sharpener", 0.68], ["trash can", 0.60], ["alphabet", 0.62], ["periodic table", 0.54],
+          ["skeleton", 0.34], ["overhead projector", 0.42], ["detention slip", 0.28], ["hall pass", 0.48],
+          ["abacus", 0.22], ["easel", 0.30], ["beanbag", 0.36], ["cubby", 0.32]
+        ]
+      },
+      {
+        category: "Home & Chores",
+        question: "A household chore people put off doing",
+        answers: [
+          ["dishes", 0.95], ["laundry", 0.94], ["vacuuming", 0.88], ["cleaning the bathroom", 0.86],
+          ["taking out the trash", 0.85], ["mopping", 0.80], ["dusting", 0.78], ["ironing", 0.74],
+          ["folding clothes", 0.82], ["mowing the lawn", 0.76], ["cleaning the fridge", 0.66],
+          ["washing windows", 0.62], ["weeding", 0.60], ["scrubbing the oven", 0.54], ["making the bed", 0.72],
+          ["decluttering", 0.56], ["cleaning gutters", 0.38], ["groceries", 0.70], ["sweeping", 0.78],
+          ["defrosting the freezer", 0.24], ["polishing silver", 0.14], ["descaling kettle", 0.18],
+          ["organizing cables", 0.22], ["washing baseboards", 0.20], ["cleaning blinds", 0.30]
+        ]
+      },
+      {
+        category: "Pop Culture & Movies",
+        question: "A classic movie trope or cliché",
+        answers: [
+          ["walking away from explosions", 0.88], ["love at first sight", 0.86], ["hacking in seconds", 0.80],
+          ["splitting up in a horror movie", 0.84], ["car won't start", 0.82], ["villain monologue", 0.78],
+          ["running in heels", 0.74], ["tripping while running", 0.76], ["misunderstanding", 0.72],
+          ["fake death", 0.68], ["amnesia", 0.64], ["training montage", 0.70], ["airport chase", 0.66],
+          ["chosen one", 0.75], ["last second bomb defusal", 0.72], ["enhance image", 0.56],
+          ["wilhelm scream", 0.32], ["red barrel explodes", 0.36], ["coughing means sick", 0.52],
+          ["no one says goodbye on phone", 0.48], ["infinite ammo", 0.58], ["nerdy makeover", 0.54],
+          ["manic pixie dream girl", 0.28], ["chekhov's gun", 0.24], ["post credits scene", 0.50]
+        ]
+      },
+      {
+        category: "Health & Body",
+        question: "Something a doctor or dentist always asks you",
+        answers: [
+          ["do you floss", 0.94], ["do you smoke", 0.90], ["do you exercise", 0.88], ["any allergies", 0.86],
+          ["how much do you drink", 0.84], ["are you taking any medication", 0.82], ["what brings you in", 0.85],
+          ["does this hurt", 0.80], ["how are you sleeping", 0.74], ["when was your last visit", 0.76],
+          ["family history", 0.70], ["diet", 0.72], ["stress levels", 0.66], ["pain scale", 0.68],
+          ["are you pregnant", 0.64], ["how much water do you drink", 0.60], ["have you traveled recently", 0.54],
+          ["when did symptoms start", 0.72], ["do you grind your teeth", 0.48], ["any surgeries", 0.58],
+          ["open wide", 0.78], ["take a deep breath", 0.74], ["any headaches", 0.52]
+        ]
+      },
+      {
+        category: "Money & Shopping",
+        question: "An impulse buy at the grocery store checkout",
+        answers: [
+          ["gum", 0.95], ["chocolate", 0.93], ["candy", 0.92], ["mints", 0.88], ["magazine", 0.84],
+          ["soda", 0.82], ["chips", 0.80], ["chapstick", 0.74], ["lighter", 0.68], ["batteries", 0.70],
+          ["energy drink", 0.76], ["water bottle", 0.72], ["lottery ticket", 0.66], ["gift card", 0.62],
+          ["hand sanitizer", 0.60], ["tissues", 0.56], ["protein bar", 0.64], ["donuts", 0.58],
+          ["reusable bag", 0.54], ["breath strips", 0.42], ["scratch card", 0.64], ["toy", 0.48],
+          ["tabloid", 0.52], ["tic tacs", 0.78], ["snickers", 0.80], ["beef jerky", 0.50]
+        ]
       }
-    }
+    ];
 
-    function buildPrompts() {
-      const out = [];
-      const seen = new Set();
+    // Build global vocabulary for fuzzy "Did you mean?" matching + strict cross-category checks
+    const ALL_KNOWN_PHRASES = [];
+    const PROMPT_ITEM_MAP = new Map();
 
-      const add = (category, question, list, rule) => {
-        if (!list || list.length < 2) return;
-        const key = `${category}|${question}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-
-        const answers = {};
-        for (const [name, pop] of list) {
-          answers[name.trim().toLowerCase().replace(/\s+/g, " ")] = pop;
-        }
-        out.push({ category, question, answers, rule });
-      };
-
-      for (const [cat, list] of Object.entries(ITEMS)) {
-        for (const ch of LETTERS) {
-          add(cat, `Name a ${cat.toLowerCase()} starting with "${ch}"`,
-            list.filter(([n]) => n.trim().toUpperCase().startsWith(ch)),
-            { type: "starts", ch });
-          add(cat, `Name a ${cat.toLowerCase()} ending with "${ch}"`,
-            list.filter(([n]) => n.trim().replace(/[^a-zA-Z]/g, "").toUpperCase().endsWith(ch)),
-            { type: "ends", ch });
-        }
-        for (let len = 3; len <= 12; len++) {
-          add(cat, `Name a ${cat.toLowerCase()} with ${len} letters`,
-            list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len),
-            { type: "len", len });
-        }
-        for (const minLen of [6, 8, 10]) {
-          add(cat, `Name a ${cat.toLowerCase()} with at least ${minLen} letters`,
-            list.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length >= minLen),
-            { type: "minLen", minLen });
-        }
-        add(cat, `Name a ${cat.toLowerCase()} with double letters`,
-          list.filter(([n]) => /([a-zA-Z])\1/i.test(n)),
-          { type: "double" });
-        add(cat, `Name a deep-cut ${cat.toLowerCase()}`,
-          list.filter(([, p]) => p <= 0.30),
-          { type: "any" });
-        add(cat, `Name an obscure ${cat.toLowerCase()}`,
-          list.filter(([, p]) => p <= 0.18),
-          { type: "any" });
-        add(cat, `Name a single-word ${cat.toLowerCase()}`,
-          list.filter(([n]) => n.trim().split(/\s+/).length === 1),
-          { type: "oneWord" });
-        add(cat, `Name a multi-word ${cat.toLowerCase()}`,
-          list.filter(([n]) => n.trim().split(/\s+/).length >= 2),
-          { type: "multiWord" });
+    REAL_LIFE_PROMPTS.forEach((p, idx) => {
+      for (const [ans, pop] of p.answers) {
+        const clean = ans.trim().toLowerCase();
+        ALL_KNOWN_PHRASES.push(clean);
+        if (!PROMPT_ITEM_MAP.has(clean)) PROMPT_ITEM_MAP.set(clean, new Set());
+        PROMPT_ITEM_MAP.get(clean).add(idx);
       }
+    });
 
-      const allEntries = Object.entries(ITEMS).flatMap(([cat, arr]) => arr.map(([n, p]) => [n, p, cat]));
+    const UNIQUE_KNOWN_PHRASES = Array.from(new Set(ALL_KNOWN_PHRASES));
 
-      for (const ch of LETTERS) {
-        add("Niche Word", `Any English word or phrase starting with "${ch}"`,
-          allEntries.filter(([n]) => n.trim().toUpperCase().startsWith(ch)).map(([n, p]) => [n, p]),
-          { type: "starts", ch });
-        add("Niche Word", `Any English word or phrase ending with "${ch}"`,
-          allEntries.filter(([n]) => n.trim().replace(/[^a-zA-Z]/g, "").toUpperCase().endsWith(ch)).map(([n, p]) => [n, p]),
-          { type: "ends", ch });
-      }
-
-      for (let len = 4; len <= 12; len++) {
-        add("Niche Word", `Any English word or phrase with ${len} letters`,
-          allEntries.filter(([n]) => n.replace(/[^a-zA-Z]/g, "").length === len).map(([n, p]) => [n, p]),
-          { type: "len", len });
-      }
-
-      add("Niche Word", `Any English word or phrase with double letters`,
-        allEntries.filter(([n]) => /([a-zA-Z])\1/i.test(n)).map(([n, p]) => [n, p]),
-        { type: "double" });
-
-      add("Niche Word", `Any multi-word English phrase`,
-        allEntries.filter(([n]) => n.trim().split(/\s+/).length >= 2).map(([n, p]) => [n, p]),
-        { type: "multiWord" });
-
-      for (const ch of LETTERS) {
-        for (const minLen of [5, 7, 9]) {
-          add("Deep Constraint", `Starts with "${ch}" and has ${minLen}+ letters`,
-            allEntries
-              .filter(([n]) => n.trim().toUpperCase().startsWith(ch) && n.replace(/[^a-zA-Z]/g, "").length >= minLen)
-              .map(([n, p]) => [n, p]),
-            { type: "startsMin", ch, minLen });
-        }
-      }
-
-      return out;
-    }
-
-    const ALL_PROMPTS = buildPrompts();
-    document.getElementById("prompt-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()}`;
+    document.getElementById("prompt-count").textContent = `Prompts: ${REAL_LIFE_PROMPTS.length} Real-Life Topics`;
 
     (function spawnEffects() {
       const box = document.getElementById("bubbles");
@@ -728,6 +726,53 @@
       }
     })();
 
+    // Levenshtein distance for close-word detection
+    function editDistance(a, b) {
+      if (a === b) return 0;
+      const m = a.length;
+      const n = b.length;
+      if (m === 0) return n;
+      if (n === 0) return m;
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 0; i <= m; i++) dp[i][0] = i;
+      for (let j = 0; j <= n; j++) dp[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1,
+            dp[i][j - 1] + 1,
+            dp[i - 1][j - 1] + cost
+          );
+        }
+      }
+      return dp[m][n];
+    }
+
+    function findClosestSuggestion(rawInput, curPrompt) {
+      const clean = norm(rawInput);
+      if (!clean || clean.length < 3) return null;
+
+      // Prioritize answers from the current prompt first, then all known words
+      const promptCandidates = curPrompt.answers.map(([a]) => norm(a));
+      const pool = Array.from(new Set([...promptCandidates, ...UNIQUE_KNOWN_PHRASES]));
+
+      let bestWord = null;
+      let bestScore = Infinity;
+
+      for (const candidate of pool) {
+        if (candidate === clean) continue;
+        const dist = editDistance(clean, candidate);
+        const maxAllowed = candidate.length <= 5 ? 1 : candidate.length <= 9 ? 2 : 3;
+        if (dist <= maxAllowed && dist < bestScore) {
+          bestScore = dist;
+          bestWord = candidate;
+        }
+      }
+
+      return bestWord;
+    }
+
     const dictCache = new Map();
 
     async function checkDictionaryPhrase(phrase) {
@@ -737,11 +782,11 @@
       const words = clean.split(/[\s-]+/).filter(Boolean);
       if (words.length === 0) return false;
 
-      const targets = words.length > 1 ? [clean, ...words] : [words[0]];
-
-      for (const token of targets) {
+      // Require every non-trivial word in a phrase to be a real English word
+      for (const token of words) {
+        if (token.length === 1 && token !== "a" && token !== "i") return false;
         if (dictCache.has(token)) {
-          if (dictCache.get(token)) return true;
+          if (!dictCache.get(token)) return false;
           continue;
         }
         try {
@@ -752,34 +797,13 @@
           });
           clearTimeout(timer);
           dictCache.set(token, res.ok);
-          if (res.ok) return true;
+          if (!res.ok) return false;
         } catch {
-          if (/^[a-z]{2,}$/i.test(token)) {
-            dictCache.set(token, true);
-            return true;
-          }
-          dictCache.set(token, false);
+          if (!/^[a-z]{2,}$/i.test(token)) return false;
+          dictCache.set(token, true);
         }
       }
 
-      return false;
-    }
-
-    function passesRule(text, rule) {
-      if (!rule || rule.type === "any") return true;
-      const trimmed = text.trim();
-      const letters = trimmed.replace(/[^a-zA-Z]/g, "");
-      const upper = trimmed.toUpperCase();
-      const upperLetters = letters.toUpperCase();
-
-      if (rule.type === "starts") return upper.startsWith(rule.ch);
-      if (rule.type === "ends") return upperLetters.endsWith(rule.ch);
-      if (rule.type === "len") return letters.length === rule.len;
-      if (rule.type === "minLen") return letters.length >= rule.minLen;
-      if (rule.type === "double") return /([a-zA-Z])\1/i.test(letters);
-      if (rule.type === "oneWord") return trimmed.split(/\s+/).length === 1;
-      if (rule.type === "multiWord") return trimmed.split(/\s+/).length >= 2;
-      if (rule.type === "startsMin") return upper.startsWith(rule.ch) && letters.length >= rule.minLen;
       return true;
     }
 
@@ -810,7 +834,7 @@
       const isPhrase = text.trim().split(/\s+/).length >= 2 ? 0.12 : 0;
       const lenBoost = Math.min(0.45, Math.max(0, (letters.length - 4) * 0.05));
       const charBoost = Math.min(0.35, rareChars * 0.15);
-      return Math.max(0.08, Math.min(0.85, 0.76 - lenBoost - charBoost - isPhrase));
+      return Math.max(0.08, Math.min(0.85, 0.74 - lenBoost - charBoost - isPhrase));
     }
 
     function hashSeed(str) {
@@ -824,7 +848,7 @@
 
     function pickSeven(seedStr) {
       let s = hashSeed(seedStr) || 1;
-      const pool = [...ALL_PROMPTS];
+      const pool = REAL_LIFE_PROMPTS.map((p, idx) => ({ ...p, idx }));
       const selected = [];
       while (selected.length < 7 && pool.length > 0) {
         s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
@@ -834,8 +858,8 @@
     }
 
     const TOTAL_ROUNDS = 7;
-    const ROUND_TIME = 25;
-    const METERS_PER_POINT = 1000; // 100x exaggerated visual depth scale (up to 700,000m!)
+    const ROUND_TIME = 30;
+    const METERS_PER_POINT = 1000;
     const MAX_SCALE_DEPTH = 700000;
 
     let deck = [];
@@ -860,6 +884,7 @@
     const formEl = document.getElementById("guess-form");
     const inputEl = document.getElementById("guess-input");
     const btnEl = document.getElementById("guess-btn");
+    const suggestionBoxEl = document.getElementById("suggestion-box");
     const msgEl = document.getElementById("msg-val");
     const playAreaEl = document.getElementById("play-area");
     const resultsAreaEl = document.getElementById("results-area");
@@ -870,17 +895,35 @@
       return s.trim().toLowerCase().replace(/\s+/g, " ");
     }
 
-    function matchList(answers, raw) {
+    function matchPromptAnswers(cur, raw) {
       const n = norm(raw);
       if (!n) return null;
-      if (Object.prototype.hasOwnProperty.call(answers, n)) {
-        return { pop: answers[n] };
-      }
-      const alt = n.endsWith("s") ? n.slice(0, -1) : `${n}s`;
-      if (Object.prototype.hasOwnProperty.call(answers, alt)) {
-        return { pop: Math.min(0.95, answers[alt] + 0.05) };
+      for (const [ans, pop] of cur.answers) {
+        const cleanAns = norm(ans);
+        if (cleanAns === n) return { pop };
+        const alt = n.endsWith("s") ? n.slice(0, -1) : `${n}s`;
+        if (cleanAns === alt) return { pop: Math.min(0.95, pop + 0.04) };
       }
       return null;
+    }
+
+    function showSuggestion(word) {
+      if (!word) {
+        suggestionBoxEl.hidden = true;
+        suggestionBoxEl.innerHTML = "";
+        return;
+      }
+      suggestionBoxEl.hidden = false;
+      suggestionBoxEl.innerHTML = `
+        <span>Did you mean:</span>
+        <button type="button" class="suggestion-btn" id="use-suggestion-btn">${word}</button>
+        <span>?</span>
+      `;
+      document.getElementById("use-suggestion-btn").onclick = () => {
+        inputEl.value = word;
+        suggestionBoxEl.hidden = true;
+        handleGuess(word, false);
+      };
     }
 
     function animateDepthCounter(targetMeters) {
@@ -903,12 +946,10 @@
     }
 
     function descendOcean(meters, gainedPts) {
-      // 100x exaggerated scroll across 25,000vh ocean column (-24,900vh max shift)
       const ratio = Math.min(1, meters / MAX_SCALE_DEPTH);
       const colShiftVh = -(ratio * 24900);
       document.documentElement.style.setProperty("--column-y", `${colShiftVh}vh`);
 
-      // Diver slides down vertical meter
       const h = railBoxEl ? railBoxEl.clientHeight : 390;
       const topStart = 34;
       const topEnd = Math.max(topStart + 20, h - 56);
@@ -920,7 +961,6 @@
       depthValEl.classList.add("bump");
 
       if (gainedPts > 0) {
-        // Massive physical downward drop of the entire card + camera shake
         const dropPx = Math.min(220, 65 + Math.round((gainedPts / 100) * 155));
         document.documentElement.style.setProperty("--ui-drop", `${dropPx}px`);
         document.documentElement.style.setProperty("--ui-scale", "0.94");
@@ -959,6 +999,7 @@
       displayedMeters = 0;
       log = [];
       msgEl.textContent = "";
+      suggestionBoxEl.hidden = true;
       resultsAreaEl.hidden = true;
       playAreaEl.hidden = false;
       descendOcean(0, 0);
@@ -979,6 +1020,8 @@
       inputEl.value = "";
       inputEl.disabled = false;
       btnEl.disabled = false;
+      suggestionBoxEl.hidden = true;
+      msgEl.textContent = "";
       inputEl.focus();
 
       timeLeft = ROUND_TIME;
@@ -994,68 +1037,95 @@
       }, 1000);
     }
 
-    async function scoreGuess(cur, raw) {
+    async function validateGuess(cur, raw) {
       const cleaned = raw.trim();
       const n = norm(cleaned);
-      if (!n) return { ok: false, reason: "Type an answer first." };
-
-      const listed = matchList(cur.answers, cleaned);
-      if (listed) {
-        return { ok: true, pop: listed.pop, extra: "" };
+      if (!n) {
+        return { ok: false, reason: "Type an answer first — your turn still counts!" };
       }
 
+      // 1. Direct match on this prompt's curated real-life list
+      const direct = matchPromptAnswers(cur, cleaned);
+      if (direct) {
+        return { ok: true, pop: direct.pop, extra: "" };
+      }
+
+      // 2. Check if it's a valid English word/phrase
       const inDict = await checkDictionaryPhrase(cleaned);
       if (!inDict) {
-        return { ok: false, reason: `"${cleaned}" isn't in the English dictionary` };
+        const close = findClosestSuggestion(cleaned, cur);
+        return {
+          ok: false,
+          reason: `"${cleaned}" isn't recognized in the English dictionary — try again (turn kept)!`,
+          suggestion: close
+        };
       }
 
-      const isOpenPrompt = cur.category === "Niche Word";
-      const knownItem = CATEGORY_LOOKUP.get(n);
-      if (!isOpenPrompt && knownItem && knownItem.category !== cur.category) {
-        return { ok: false, reason: `"${cleaned}" belongs to ${knownItem.category}, not ${cur.category}` };
+      // 3. Check if it clearly belongs to a completely different prompt instead of this one
+      const mappedPrompts = PROMPT_ITEM_MAP.get(n);
+      if (mappedPrompts && !mappedPrompts.has(cur.idx)) {
+        const close = findClosestSuggestion(cleaned, cur);
+        return {
+          ok: false,
+          reason: `"${cleaned}" doesn't fit this prompt — try again (turn kept)!`,
+          suggestion: close
+        };
       }
 
-      if (!passesRule(cleaned, cur.rule)) {
-        return { ok: false, reason: `"${cleaned}" doesn't match the prompt's rule` };
-      }
-
+      // 4. Valid English word/phrase that fits the real-life prompt
       return {
         ok: true,
         pop: rarityFromPhrase(cleaned),
-        extra: isOpenPrompt ? " · Dictionary" : " · Technical match"
+        extra: " · Valid English match"
       };
     }
 
     async function handleGuess(raw, timedOut = false) {
       if (busy) return;
       busy = true;
-      clearInterval(countdown);
       inputEl.disabled = true;
       btnEl.disabled = true;
+      suggestionBoxEl.hidden = true;
 
       const cur = deck[round];
       const cleaned = raw.trim();
-      let pts = 0;
 
       if (timedOut) {
+        clearInterval(countdown);
         msgEl.innerHTML = `<span class="bad">Time's up! +0 pts</span>`;
-      } else {
-        msgEl.innerHTML = `<span class="warn">Checking depth...</span>`;
-        const res = await scoreGuess(cur, cleaned);
-        if (res.ok) {
-          pts = pointsFromRarity(res.pop);
-          const tier = tierNameForPoints(pts);
-          const cls = pts >= 32 ? "ok" : "warn";
-          const dropMeters = pts * METERS_PER_POINT;
-          msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.extra} — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
-        } else {
-          msgEl.innerHTML = `<span class="bad">${res.reason} (+0 pts)</span>`;
-        }
+        log.push({ q: cur.question, ans: "—", pts: 0 });
+        round += 1;
+        nextRoundTimer = setTimeout(runRound, 1800);
+        return;
       }
+
+      msgEl.innerHTML = `<span class="warn">Checking answer...</span>`;
+      const res = await validateGuess(cur, cleaned);
+
+      if (!res.ok) {
+        // Do NOT count as a go — keep the current round and timer active!
+        busy = false;
+        inputEl.disabled = false;
+        btnEl.disabled = false;
+        inputEl.focus();
+        inputEl.select();
+        msgEl.innerHTML = `<span class="bad">${res.reason}</span>`;
+        showSuggestion(res.suggestion || null);
+        return;
+      }
+
+      // Valid answer — advance round and plunge!
+      clearInterval(countdown);
+      const pts = pointsFromRarity(res.pop);
+      const tier = tierNameForPoints(pts);
+      const cls = pts >= 32 ? "ok" : "warn";
+      const dropMeters = pts * METERS_PER_POINT;
+
+      msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.extra} — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
 
       score += pts;
       descendOcean(score * METERS_PER_POINT, pts);
-      log.push({ q: cur.question, ans: cleaned || "—", pts });
+      log.push({ q: cur.question, ans: cleaned, pts });
 
       round += 1;
       nextRoundTimer = setTimeout(runRound, 2100);
