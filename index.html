@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Krillion — Real-Life Abyssal Dive</title>
+  <title>Krillion — 100x Extreme Abyssal Plunge</title>
   <style>
     :root {
       --card: rgba(6, 24, 36, 0.88);
@@ -501,205 +501,353 @@
       }
     })();
 
-    // Real-life Krillion-style prompts & everyday human answers with popularity scores
-    const REAL_LIFE_PROMPTS = [
-      {
-        category: "Everyday Life",
-        question: "Something you find in a kitchen junk drawer",
-        answers: [
-          ["batteries", 0.94], ["scissors", 0.90], ["tape", 0.88], ["rubber bands", 0.85], ["pens", 0.86],
-          ["takeout menus", 0.74], ["soy sauce packets", 0.68], ["screwdriver", 0.72], ["matches", 0.62],
-          ["super glue", 0.66], ["keys", 0.70], ["candles", 0.64], ["paperclips", 0.60], ["chargers", 0.75],
-          ["receipts", 0.65], ["twist ties", 0.48], ["allen wrench", 0.34], ["birthday candles", 0.52],
-          ["coupons", 0.56], ["measuring tape", 0.54], ["bottle opener", 0.62], ["chip clips", 0.46],
-          ["mystery key", 0.24], ["bread tags", 0.16], ["manual", 0.28], ["flashlight", 0.58],
-          ["thimble", 0.08], ["twine", 0.18], ["magnet", 0.44], ["dead battery", 0.32]
-        ]
-      },
-      {
-        category: "Social Habits",
-        question: "An excuse for being late to work or plans",
-        answers: [
-          ["traffic", 0.96], ["overslept", 0.90], ["alarm didn't go off", 0.88], ["train delay", 0.82],
-          ["flat tire", 0.78], ["car trouble", 0.80], ["doctor appointment", 0.72], ["lost my keys", 0.68],
-          ["sick", 0.76], ["weather", 0.64], ["bus was late", 0.74], ["childcare", 0.56],
-          ["family emergency", 0.66], ["dog threw up", 0.34], ["locked out", 0.48], ["wrong time", 0.52],
-          ["food poisoning", 0.60], ["dentist", 0.54], ["dead battery", 0.58], ["roadwork", 0.44],
-          ["migraine", 0.50], ["stuck in elevator", 0.14], ["bird poop", 0.09], ["wardrobe malfunction", 0.24],
-          ["lost wallet", 0.46], ["spilled coffee", 0.38], ["police", 0.30], ["power outage", 0.36]
-        ]
-      },
-      {
-        category: "Modern Life",
-        question: "Something people pretend to understand",
-        answers: [
-          ["taxes", 0.92], ["crypto", 0.88], ["stock market", 0.86], ["quantum physics", 0.82],
-          ["wine", 0.76], ["art", 0.74], ["politics", 0.80], ["insurance", 0.78], ["mortgages", 0.70],
-          ["ai", 0.84], ["blockchain", 0.72], ["economics", 0.68], ["terms and conditions", 0.64],
-          ["classical music", 0.44], ["chess", 0.52], ["cars", 0.62], ["credit score", 0.66],
-          ["inflation", 0.70], ["opera", 0.34], ["astrology", 0.48], ["philosophy", 0.46],
-          ["offside rule", 0.42], ["sourdough", 0.24], ["jazz", 0.38], ["cloud computing", 0.50],
-          ["hedge funds", 0.36], ["nihilism", 0.18], ["cricket rules", 0.28], ["fine dining", 0.32]
-        ]
-      },
-      {
-        category: "Everyday Life",
-        question: "Something you lose all the time",
-        answers: [
-          ["keys", 0.96], ["phone", 0.94], ["wallet", 0.90], ["sunglasses", 0.84], ["socks", 0.86],
-          ["chapstick", 0.78], ["pen", 0.82], ["remote", 0.85], ["earbuds", 0.80], ["charger", 0.76],
-          ["umbrella", 0.74], ["hair ties", 0.72], ["lighter", 0.68], ["glasses", 0.79], ["water bottle", 0.66],
-          ["guitar pick", 0.34], ["tupperware lid", 0.52], ["earring", 0.56], ["glove", 0.60],
-          ["watch", 0.58], ["passport", 0.48], ["id", 0.62], ["airpods", 0.78], ["lip balm", 0.74],
-          ["nail clippers", 0.30], ["sd card", 0.18], ["thimble", 0.08], ["bobby pins", 0.54]
-        ]
-      },
-      {
-        category: "Food & Drink",
-        question: "A controversial pizza topping",
-        answers: [
-          ["pineapple", 0.97], ["anchovies", 0.92], ["mushrooms", 0.80], ["olives", 0.78], ["broccoli", 0.64],
-          ["corn", 0.60], ["tuna", 0.54], ["egg", 0.50], ["banana", 0.36], ["kiwi", 0.22],
-          ["mayonnaise", 0.34], ["pickles", 0.48], ["jalapenos", 0.66], ["spinach", 0.58], ["artichoke", 0.52],
-          ["bbq chicken", 0.62], ["ham", 0.70], ["onions", 0.72], ["peppers", 0.68], ["blue cheese", 0.46],
-          ["figs", 0.26], ["peas", 0.24], ["french fries", 0.40], ["hot dogs", 0.38], ["strawberries", 0.14],
-          ["chocolate", 0.28], ["capers", 0.32], ["brussels sprouts", 0.20], ["watermelon", 0.10]
-        ]
-      },
-      {
-        category: "Travel & Hotels",
-        question: "Something you see at a hotel breakfast buffet",
-        answers: [
-          ["scrambled eggs", 0.94], ["bacon", 0.92], ["waffles", 0.88], ["pancakes", 0.86], ["toast", 0.85],
-          ["cereal", 0.84], ["coffee", 0.90], ["orange juice", 0.87], ["croissants", 0.78], ["fruit salad", 0.76],
-          ["yogurt", 0.74], ["sausages", 0.82], ["hash browns", 0.75], ["bagels", 0.72], ["muffins", 0.70],
-          ["oatmeal", 0.64], ["bananas", 0.68], ["jam", 0.62], ["butter", 0.66], ["tea", 0.72],
-          ["boiled eggs", 0.56], ["beans", 0.58], ["mushrooms", 0.52], ["tomatoes", 0.50], ["danish", 0.46],
-          ["mini cereal boxes", 0.34], ["waffle maker", 0.42], ["watery juice", 0.22], ["cold toast", 0.26],
-          ["melon", 0.44], ["ham", 0.60], ["cheese slices", 0.54]
-        ]
-      },
-      {
-        category: "Pet Peeves",
-        question: "A sound that immediately annoys people",
-        answers: [
-          ["nails on a chalkboard", 0.94], ["chewing", 0.90], ["snoring", 0.88], ["alarm clock", 0.86],
-          ["crying baby", 0.85], ["car alarm", 0.82], ["mosquitos", 0.78], ["fork scraping plate", 0.80],
-          ["pen clicking", 0.74], ["slurping", 0.76], ["barking dog", 0.79], ["drill", 0.70],
-          ["leaf blower", 0.66], ["styrofoam", 0.62], ["knuckle cracking", 0.64], ["siren", 0.72],
-          ["tapping", 0.60], ["whistling", 0.56], ["hiccups", 0.48], ["static", 0.44],
-          ["feedback", 0.42], ["drip", 0.54], ["dripping faucet", 0.58], ["teeth grinding", 0.46],
-          ["loud breathing", 0.52], ["smoke detector beep", 0.68], ["velcro", 0.24], ["tin foil", 0.28]
-        ]
-      },
-      {
-        category: "Human Nature",
-        question: "A harmless lie almost everyone tells",
-        answers: [
-          ["i'm fine", 0.95], ["on my way", 0.92], ["i read the terms", 0.86], ["i'm five minutes away", 0.88],
-          ["i didn't see your text", 0.82], ["i'm busy", 0.80], ["looks great", 0.78], ["i'll start tomorrow", 0.74],
-          ["i'm not tired", 0.72], ["i know", 0.76], ["good to see you", 0.70], ["i was just about to call", 0.66],
-          ["my phone died", 0.68], ["i'm listening", 0.74], ["i'll call you back", 0.64], ["i'm almost done", 0.62],
-          ["it's fine", 0.84], ["no problem", 0.78], ["i love it", 0.70], ["i'm good", 0.86],
-          ["just looking", 0.58], ["i'll think about it", 0.54], ["i'm allergic", 0.28], ["didn't hear my alarm", 0.52],
-          ["my wifi cut out", 0.48], ["i forgot", 0.76], ["one more episode", 0.44]
-        ]
-      },
-      {
-        category: "Weekend & Leisure",
-        question: "Something people bring to the beach",
-        answers: [
-          ["towel", 0.96], ["sunscreen", 0.95], ["sunglasses", 0.90], ["umbrella", 0.86], ["swimsuit", 0.88],
-          ["cooler", 0.80], ["flip flops", 0.82], ["hat", 0.84], ["book", 0.76], ["water", 0.85],
-          ["snacks", 0.78], ["beach ball", 0.70], ["chair", 0.74], ["bucket", 0.66], ["spade", 0.60],
-          ["frisbee", 0.62], ["speaker", 0.58], ["volleyball", 0.56], ["goggles", 0.54], ["snorkel", 0.50],
-          ["surfboard", 0.52], ["floatie", 0.48], ["sandwiches", 0.64], ["camera", 0.55], ["ice", 0.60],
-          ["aloe vera", 0.36], ["metal detector", 0.14], ["kite", 0.42], ["paddleboard", 0.34], ["kindle", 0.38]
-        ]
-      },
-      {
-        category: "Childhood & School",
-        question: "Something you remember from school classrooms",
-        answers: [
-          ["chalkboard", 0.92], ["whiteboard", 0.90], ["desk", 0.94], ["pencil", 0.93], ["globe", 0.78],
-          ["projector", 0.76], ["ruler", 0.82], ["eraser", 0.84], ["clock", 0.80], ["map", 0.79],
-          ["backpack", 0.86], ["textbook", 0.85], ["binder", 0.72], ["glue stick", 0.70], ["scissors", 0.75],
-          ["crayons", 0.77], ["markers", 0.74], ["locker", 0.81], ["calculator", 0.76], ["stapler", 0.64],
-          ["pencil sharpener", 0.68], ["trash can", 0.60], ["alphabet", 0.62], ["periodic table", 0.54],
-          ["skeleton", 0.34], ["overhead projector", 0.42], ["detention slip", 0.28], ["hall pass", 0.48],
-          ["abacus", 0.22], ["easel", 0.30], ["beanbag", 0.36], ["cubby", 0.32]
-        ]
-      },
-      {
-        category: "Home & Chores",
-        question: "A household chore people put off doing",
-        answers: [
-          ["dishes", 0.95], ["laundry", 0.94], ["vacuuming", 0.88], ["cleaning the bathroom", 0.86],
-          ["taking out the trash", 0.85], ["mopping", 0.80], ["dusting", 0.78], ["ironing", 0.74],
-          ["folding clothes", 0.82], ["mowing the lawn", 0.76], ["cleaning the fridge", 0.66],
-          ["washing windows", 0.62], ["weeding", 0.60], ["scrubbing the oven", 0.54], ["making the bed", 0.72],
-          ["decluttering", 0.56], ["cleaning gutters", 0.38], ["groceries", 0.70], ["sweeping", 0.78],
-          ["defrosting the freezer", 0.24], ["polishing silver", 0.14], ["descaling kettle", 0.18],
-          ["organizing cables", 0.22], ["washing baseboards", 0.20], ["cleaning blinds", 0.30]
-        ]
-      },
-      {
-        category: "Pop Culture & Movies",
-        question: "A classic movie trope or cliché",
-        answers: [
-          ["walking away from explosions", 0.88], ["love at first sight", 0.86], ["hacking in seconds", 0.80],
-          ["splitting up in a horror movie", 0.84], ["car won't start", 0.82], ["villain monologue", 0.78],
-          ["running in heels", 0.74], ["tripping while running", 0.76], ["misunderstanding", 0.72],
-          ["fake death", 0.68], ["amnesia", 0.64], ["training montage", 0.70], ["airport chase", 0.66],
-          ["chosen one", 0.75], ["last second bomb defusal", 0.72], ["enhance image", 0.56],
-          ["wilhelm scream", 0.32], ["red barrel explodes", 0.36], ["coughing means sick", 0.52],
-          ["no one says goodbye on phone", 0.48], ["infinite ammo", 0.58], ["nerdy makeover", 0.54],
-          ["manic pixie dream girl", 0.28], ["chekhov's gun", 0.24], ["post credits scene", 0.50]
-        ]
-      },
-      {
-        category: "Health & Body",
-        question: "Something a doctor or dentist always asks you",
-        answers: [
-          ["do you floss", 0.94], ["do you smoke", 0.90], ["do you exercise", 0.88], ["any allergies", 0.86],
-          ["how much do you drink", 0.84], ["are you taking any medication", 0.82], ["what brings you in", 0.85],
-          ["does this hurt", 0.80], ["how are you sleeping", 0.74], ["when was your last visit", 0.76],
-          ["family history", 0.70], ["diet", 0.72], ["stress levels", 0.66], ["pain scale", 0.68],
-          ["are you pregnant", 0.64], ["how much water do you drink", 0.60], ["have you traveled recently", 0.54],
-          ["when did symptoms start", 0.72], ["do you grind your teeth", 0.48], ["any surgeries", 0.58],
-          ["open wide", 0.78], ["take a deep breath", 0.74], ["any headaches", 0.52]
-        ]
-      },
-      {
-        category: "Money & Shopping",
-        question: "An impulse buy at the grocery store checkout",
-        answers: [
-          ["gum", 0.95], ["chocolate", 0.93], ["candy", 0.92], ["mints", 0.88], ["magazine", 0.84],
-          ["soda", 0.82], ["chips", 0.80], ["chapstick", 0.74], ["lighter", 0.68], ["batteries", 0.70],
-          ["energy drink", 0.76], ["water bottle", 0.72], ["lottery ticket", 0.66], ["gift card", 0.62],
-          ["hand sanitizer", 0.60], ["tissues", 0.56], ["protein bar", 0.64], ["donuts", 0.58],
-          ["reusable bag", 0.54], ["breath strips", 0.42], ["scratch card", 0.64], ["toy", 0.48],
-          ["tabloid", 0.52], ["tic tacs", 0.78], ["snickers", 0.80], ["beef jerky", 0.50]
-        ]
-      }
+    // Core real-life answer banks used to generate 1,000+ relatable Krillion-style prompts
+    const BANKS = {
+      junkDrawer: [
+        ["batteries", 0.94], ["scissors", 0.90], ["tape", 0.88], ["rubber bands", 0.85], ["pens", 0.86],
+        ["takeout menus", 0.74], ["soy sauce packets", 0.68], ["screwdriver", 0.72], ["matches", 0.62],
+        ["super glue", 0.66], ["keys", 0.70], ["candles", 0.64], ["paperclips", 0.60], ["chargers", 0.75],
+        ["receipts", 0.65], ["twist ties", 0.48], ["allen wrench", 0.34], ["birthday candles", 0.52],
+        ["coupons", 0.56], ["measuring tape", 0.54], ["bottle opener", 0.62], ["chip clips", 0.46],
+        ["mystery key", 0.24], ["bread tags", 0.16], ["manual", 0.28], ["flashlight", 0.58],
+        ["twine", 0.18], ["magnet", 0.44], ["dead battery", 0.32], ["string", 0.42]
+      ],
+      lateExcuses: [
+        ["traffic", 0.96], ["overslept", 0.90], ["alarm didn't go off", 0.88], ["train delay", 0.82],
+        ["flat tire", 0.78], ["car trouble", 0.80], ["doctor appointment", 0.72], ["lost my keys", 0.68],
+        ["sick", 0.76], ["weather", 0.64], ["bus was late", 0.74], ["childcare", 0.56],
+        ["family emergency", 0.66], ["dog threw up", 0.34], ["locked out", 0.48], ["wrong time", 0.52],
+        ["food poisoning", 0.60], ["dentist", 0.54], ["dead battery", 0.58], ["roadwork", 0.44],
+        ["migraine", 0.50], ["stuck in elevator", 0.14], ["bird poop", 0.09], ["lost wallet", 0.46],
+        ["spilled coffee", 0.38], ["police", 0.30], ["power outage", 0.36], ["rain", 0.56]
+      ],
+      pretendUnderstand: [
+        ["taxes", 0.92], ["crypto", 0.88], ["stock market", 0.86], ["quantum physics", 0.82],
+        ["wine", 0.76], ["art", 0.74], ["politics", 0.80], ["insurance", 0.78], ["mortgages", 0.70],
+        ["ai", 0.84], ["blockchain", 0.72], ["economics", 0.68], ["terms and conditions", 0.64],
+        ["classical music", 0.44], ["chess", 0.52], ["cars", 0.62], ["credit score", 0.66],
+        ["inflation", 0.70], ["opera", 0.34], ["astrology", 0.48], ["philosophy", 0.46],
+        ["offside rule", 0.42], ["sourdough", 0.24], ["jazz", 0.38], ["cloud computing", 0.50],
+        ["hedge funds", 0.36], ["nihilism", 0.18], ["cricket rules", 0.28], ["fine dining", 0.32]
+      ],
+      lostOften: [
+        ["keys", 0.96], ["phone", 0.94], ["wallet", 0.90], ["sunglasses", 0.84], ["socks", 0.86],
+        ["chapstick", 0.78], ["pen", 0.82], ["remote", 0.85], ["earbuds", 0.80], ["charger", 0.76],
+        ["umbrella", 0.74], ["hair ties", 0.72], ["lighter", 0.68], ["glasses", 0.79], ["water bottle", 0.66],
+        ["guitar pick", 0.34], ["tupperware lid", 0.52], ["earring", 0.56], ["glove", 0.60],
+        ["watch", 0.58], ["passport", 0.48], ["id", 0.62], ["airpods", 0.78], ["lip balm", 0.74],
+        ["nail clippers", 0.30], ["sd card", 0.18], ["bobby pins", 0.54], ["scrunchie", 0.40]
+      ],
+      pizzaToppings: [
+        ["pineapple", 0.97], ["anchovies", 0.92], ["mushrooms", 0.80], ["olives", 0.78], ["broccoli", 0.64],
+        ["corn", 0.60], ["tuna", 0.54], ["egg", 0.50], ["banana", 0.36], ["kiwi", 0.22],
+        ["mayonnaise", 0.34], ["pickles", 0.48], ["jalapenos", 0.66], ["spinach", 0.58], ["artichoke", 0.52],
+        ["bbq chicken", 0.62], ["ham", 0.70], ["onions", 0.72], ["peppers", 0.68], ["blue cheese", 0.46],
+        ["figs", 0.26], ["peas", 0.24], ["french fries", 0.40], ["hot dogs", 0.38], ["strawberries", 0.14],
+        ["chocolate", 0.28], ["capers", 0.32], ["brussels sprouts", 0.20], ["watermelon", 0.10], ["bacon", 0.84]
+      ],
+      hotelBreakfast: [
+        ["scrambled eggs", 0.94], ["bacon", 0.92], ["waffles", 0.88], ["pancakes", 0.86], ["toast", 0.85],
+        ["cereal", 0.84], ["coffee", 0.90], ["orange juice", 0.87], ["croissants", 0.78], ["fruit salad", 0.76],
+        ["yogurt", 0.74], ["sausages", 0.82], ["hash browns", 0.75], ["bagels", 0.72], ["muffins", 0.70],
+        ["oatmeal", 0.64], ["bananas", 0.68], ["jam", 0.62], ["butter", 0.66], ["tea", 0.72],
+        ["boiled eggs", 0.56], ["beans", 0.58], ["mushrooms", 0.52], ["tomatoes", 0.50], ["danish", 0.46],
+        ["waffle maker", 0.42], ["melon", 0.44], ["ham", 0.60], ["cheese slices", 0.54], ["grapes", 0.48]
+      ],
+      annoyingSounds: [
+        ["nails on a chalkboard", 0.94], ["chewing", 0.90], ["snoring", 0.88], ["alarm clock", 0.86],
+        ["crying baby", 0.85], ["car alarm", 0.82], ["mosquitos", 0.78], ["fork scraping plate", 0.80],
+        ["pen clicking", 0.74], ["slurping", 0.76], ["barking dog", 0.79], ["drill", 0.70],
+        ["leaf blower", 0.66], ["styrofoam", 0.62], ["knuckle cracking", 0.64], ["siren", 0.72],
+        ["tapping", 0.60], ["whistling", 0.56], ["hiccups", 0.48], ["static", 0.44],
+        ["feedback", 0.42], ["dripping faucet", 0.58], ["teeth grinding", 0.46],
+        ["loud breathing", 0.52], ["smoke detector beep", 0.68], ["velcro", 0.24], ["tin foil", 0.28], ["honking", 0.74]
+      ],
+      harmlessLies: [
+        ["i'm fine", 0.95], ["on my way", 0.92], ["i read the terms", 0.86], ["i'm five minutes away", 0.88],
+        ["i didn't see your text", 0.82], ["i'm busy", 0.80], ["looks great", 0.78], ["i'll start tomorrow", 0.74],
+        ["i'm not tired", 0.72], ["i know", 0.76], ["good to see you", 0.70], ["i was just about to call", 0.66],
+        ["my phone died", 0.68], ["i'm listening", 0.74], ["i'll call you back", 0.64], ["i'm almost done", 0.62],
+        ["it's fine", 0.84], ["no problem", 0.78], ["i love it", 0.70], ["i'm good", 0.86],
+        ["just looking", 0.58], ["i'll think about it", 0.54], ["i'm allergic", 0.28], ["didn't hear my alarm", 0.52],
+        ["my wifi cut out", 0.48], ["i forgot", 0.76], ["one more episode", 0.44], ["almost ready", 0.66]
+      ],
+      beachItems: [
+        ["towel", 0.96], ["sunscreen", 0.95], ["sunglasses", 0.90], ["umbrella", 0.86], ["swimsuit", 0.88],
+        ["cooler", 0.80], ["flip flops", 0.82], ["hat", 0.84], ["book", 0.76], ["water", 0.85],
+        ["snacks", 0.78], ["beach ball", 0.70], ["chair", 0.74], ["bucket", 0.66], ["spade", 0.60],
+        ["frisbee", 0.62], ["speaker", 0.58], ["volleyball", 0.56], ["goggles", 0.54], ["snorkel", 0.50],
+        ["surfboard", 0.52], ["floatie", 0.48], ["sandwiches", 0.64], ["camera", 0.55], ["ice", 0.60],
+        ["aloe vera", 0.36], ["metal detector", 0.14], ["kite", 0.42], ["paddleboard", 0.34], ["kindle", 0.38]
+      ],
+      classroomItems: [
+        ["chalkboard", 0.92], ["whiteboard", 0.90], ["desk", 0.94], ["pencil", 0.93], ["globe", 0.78],
+        ["projector", 0.76], ["ruler", 0.82], ["eraser", 0.84], ["clock", 0.80], ["map", 0.79],
+        ["backpack", 0.86], ["textbook", 0.85], ["binder", 0.72], ["glue stick", 0.70], ["scissors", 0.75],
+        ["crayons", 0.77], ["markers", 0.74], ["locker", 0.81], ["calculator", 0.76], ["stapler", 0.64],
+        ["pencil sharpener", 0.68], ["trash can", 0.60], ["alphabet", 0.62], ["periodic table", 0.54],
+        ["skeleton", 0.34], ["detention slip", 0.28], ["hall pass", 0.48], ["abacus", 0.22], ["easel", 0.30]
+      ],
+      putOffChores: [
+        ["dishes", 0.95], ["laundry", 0.94], ["vacuuming", 0.88], ["cleaning the bathroom", 0.86],
+        ["taking out the trash", 0.85], ["mopping", 0.80], ["dusting", 0.78], ["ironing", 0.74],
+        ["folding clothes", 0.82], ["mowing the lawn", 0.76], ["cleaning the fridge", 0.66],
+        ["washing windows", 0.62], ["weeding", 0.60], ["scrubbing the oven", 0.54], ["making the bed", 0.72],
+        ["decluttering", 0.56], ["cleaning gutters", 0.38], ["groceries", 0.70], ["sweeping", 0.78],
+        ["defrosting the freezer", 0.24], ["polishing silver", 0.14], ["descaling kettle", 0.18],
+        ["organizing cables", 0.22], ["washing baseboards", 0.20], ["cleaning blinds", 0.30]
+      ],
+      movieTropes: [
+        ["walking away from explosions", 0.88], ["love at first sight", 0.86], ["hacking in seconds", 0.80],
+        ["splitting up in a horror movie", 0.84], ["car won't start", 0.82], ["villain monologue", 0.78],
+        ["running in heels", 0.74], ["tripping while running", 0.76], ["misunderstanding", 0.72],
+        ["fake death", 0.68], ["amnesia", 0.64], ["training montage", 0.70], ["airport chase", 0.66],
+        ["chosen one", 0.75], ["last second bomb defusal", 0.72], ["enhance image", 0.56],
+        ["wilhelm scream", 0.32], ["red barrel explodes", 0.36], ["coughing means sick", 0.52],
+        ["no one says goodbye on phone", 0.48], ["infinite ammo", 0.58], ["nerdy makeover", 0.54],
+        ["post credits scene", 0.50], ["jump scare", 0.74], ["slow motion walk", 0.68]
+      ],
+      doctorQuestions: [
+        ["do you floss", 0.94], ["do you smoke", 0.90], ["do you exercise", 0.88], ["any allergies", 0.86],
+        ["how much do you drink", 0.84], ["are you taking any medication", 0.82], ["what brings you in", 0.85],
+        ["does this hurt", 0.80], ["how are you sleeping", 0.74], ["when was your last visit", 0.76],
+        ["family history", 0.70], ["diet", 0.72], ["stress levels", 0.66], ["pain scale", 0.68],
+        ["are you pregnant", 0.64], ["how much water do you drink", 0.60], ["have you traveled recently", 0.54],
+        ["when did symptoms start", 0.72], ["do you grind your teeth", 0.48], ["any surgeries", 0.58],
+        ["open wide", 0.78], ["take a deep breath", 0.74], ["any headaches", 0.52], ["rate your pain", 0.64]
+      ],
+      impulseBuys: [
+        ["gum", 0.95], ["chocolate", 0.93], ["candy", 0.92], ["mints", 0.88], ["magazine", 0.84],
+        ["soda", 0.82], ["chips", 0.80], ["chapstick", 0.74], ["lighter", 0.68], ["batteries", 0.70],
+        ["energy drink", 0.76], ["water bottle", 0.72], ["lottery ticket", 0.66], ["gift card", 0.62],
+        ["hand sanitizer", 0.60], ["tissues", 0.56], ["protein bar", 0.64], ["donuts", 0.58],
+        ["reusable bag", 0.54], ["breath strips", 0.42], ["scratch card", 0.64], ["toy", 0.48],
+        ["tabloid", 0.52], ["tic tacs", 0.78], ["snickers", 0.80], ["beef jerky", 0.50]
+      ],
+      roadTrip: [
+        ["snacks", 0.95], ["playlist", 0.88], ["sunglasses", 0.90], ["water", 0.92], ["charger", 0.89],
+        ["pillows", 0.76], ["blanket", 0.74], ["gps", 0.80], ["coffee", 0.85], ["gum", 0.78],
+        ["first aid kit", 0.56], ["flashlight", 0.52], ["tissues", 0.72], ["road atlas", 0.24],
+        ["podcasts", 0.74], ["trash bag", 0.62], ["sunscreen", 0.66], ["hoodie", 0.75], ["cash", 0.68]
+      ],
+      coldFoodBetter: [
+        ["pizza", 0.95], ["ice cream", 0.94], ["watermelon", 0.88], ["grapes", 0.82], ["brownies", 0.64],
+        ["fried chicken", 0.72], ["soda", 0.90], ["cheesecake", 0.80], ["apples", 0.76], ["cereal", 0.70],
+        ["pudding", 0.74], ["strawberries", 0.78], ["sushi", 0.68], ["lasagna", 0.46], ["tiramisu", 0.76]
+      ],
+      onlineRegrets: [
+        ["clothes that don't fit", 0.92], ["gadgets", 0.84], ["shoes", 0.86], ["gym equipment", 0.78],
+        ["kitchen appliances", 0.74], ["books", 0.66], ["makeup", 0.70], ["subscriptions", 0.82],
+        ["decor", 0.64], ["novelty items", 0.58], ["skincare", 0.68], ["tools", 0.54], ["bags", 0.62]
+      ]
+    };
+
+    const PROMPT_BLUEPRINTS = [
+      { cat: "Everyday Life", bank: "junkDrawer", templates: [
+        "Something you find in a kitchen junk drawer",
+        "Something rattling around in a junk drawer",
+        "Something you haven't used in years from a junk drawer",
+        "Something tangled in a drawer at home",
+        "Something small you keep in a drawer just in case"
+      ]},
+      { cat: "Social Habits", bank: "lateExcuses", templates: [
+        "An excuse for being late to work or plans",
+        "Something people blame when they show up late",
+        "An excuse for missing a morning meeting",
+        "Something people say when running behind schedule",
+        "A classic excuse for arriving late to a hangout"
+      ]},
+      { cat: "Modern Life", bank: "pretendUnderstand", templates: [
+        "Something people pretend to understand",
+        "A topic people nod along to without really getting it",
+        "Something adults claim they understand completely",
+        "A complex thing people pretend to know about",
+        "Something people act like experts on at parties"
+      ]},
+      { cat: "Everyday Life", bank: "lostOften", templates: [
+        "Something you lose all the time",
+        "Something you constantly misplace around the house",
+        "Something you always have to search for before leaving",
+        "Something that mysteriously disappears every week",
+        "Something people leave behind and forget"
+      ]},
+      { cat: "Food & Drink", bank: "pizzaToppings", templates: [
+        "A controversial pizza topping",
+        "A pizza topping people argue about",
+        "Something people put on pizza that divides opinions",
+        "A surprising topping on a pizza",
+        "A pizza topping some people love and others hate"
+      ]},
+      { cat: "Travel & Hotels", bank: "hotelBreakfast", templates: [
+        "Something you see at a hotel breakfast buffet",
+        "Something on a hotel morning buffet table",
+        "Something people grab at a free hotel breakfast",
+        "A classic hotel breakfast item",
+        "Something sitting in a warming tray at a hotel breakfast"
+      ]},
+      { cat: "Pet Peeves", bank: "annoyingSounds", templates: [
+        "A sound that immediately annoys people",
+        "An irritating noise in a quiet room",
+        "A sound that gets on people's nerves",
+        "A grating sound nobody likes hearing",
+        "A noise that ruins focus instantly"
+      ]},
+      { cat: "Human Nature", bank: "harmlessLies", templates: [
+        "A harmless lie almost everyone tells",
+        "A white lie people tell to be polite",
+        "Something people say when they aren't being totally honest",
+        "A common excuse or white lie in everyday life",
+        "A casual fib people tell all the time"
+      ]},
+      { cat: "Weekend & Leisure", bank: "beachItems", templates: [
+        "Something people bring to the beach",
+        "Something you pack for a sunny beach day",
+        "Something covered in sand after a beach trip",
+        "A beach bag essential",
+        "Something people set up on the sand"
+      ]},
+      { cat: "Childhood & School", bank: "classroomItems", templates: [
+        "Something you remember from school classrooms",
+        "Something sitting on a teacher's desk or classroom wall",
+        "A classic school classroom object",
+        "Something students use in class every day",
+        "Something inside a school locker or desk"
+      ]},
+      { cat: "Home & Chores", bank: "putOffChores", templates: [
+        "A household chore people put off doing",
+        "A chore everyone delays until the weekend",
+        "A boring task around the house nobody wants to do",
+        "A chore people procrastinate on",
+        "Something on the to-do list that gets ignored"
+      ]},
+      { cat: "Pop Culture & Movies", bank: "movieTropes", templates: [
+        "A classic movie trope or cliché",
+        "Something that happens in movies that rarely happens in real life",
+        "A predictable action or horror movie cliché",
+        "A trope you see in films all the time",
+        "Something Hollywood does in almost every movie"
+      ]},
+      { cat: "Health & Body", bank: "doctorQuestions", templates: [
+        "Something a doctor or dentist always asks you",
+        "A routine question at a checkup or dentist visit",
+        "Something a clinic asks before an appointment",
+        "A question you expect at the doctor's office",
+        "Something a dentist asks while holding tools"
+      ]},
+      { cat: "Money & Shopping", bank: "impulseBuys", templates: [
+        "An impulse buy at the grocery store checkout",
+        "Something you toss in the cart while waiting in line",
+        "A small impulse purchase by the register",
+        "Something tempting near the checkout counter",
+        "A quick buy you grab while checking out"
+      ]},
+      { cat: "Travel & Hotels", bank: "roadTrip", templates: [
+        "Something essential for a long road trip",
+        "Something you keep nearby on a long drive",
+        "Something people pack for hours on the highway",
+        "A road trip staple in the car",
+        "Something that saves a long car ride"
+      ]},
+      { cat: "Food & Drink", bank: "coldFoodBetter", templates: [
+        "A food that is surprisingly good cold",
+        "Something people eat straight from the fridge",
+        "A leftover food that works cold",
+        "Something refreshing straight out of the fridge",
+        "A food people eat cold even if it's usually warm"
+      ]},
+      { cat: "Money & Shopping", bank: "onlineRegrets", templates: [
+        "Something people impulse-buy online and regret",
+        "An online shopping purchase that doesn't live up to the hype",
+        "Something bought late at night online",
+        "A common online shopping regret",
+        "Something ordered online that ends up unused"
+      ]}
     ];
 
-    // Build global vocabulary for fuzzy "Did you mean?" matching + strict cross-category checks
-    const ALL_KNOWN_PHRASES = [];
-    const PROMPT_ITEM_MAP = new Map();
+    const CONTEXT_TAGS = [
+      "in real life", "at home", "on a busy day", "with friends", "on a trip",
+      "at work", "on a weekend", "during errands", "at night", "in the morning",
+      "when rushing", "on a budget", "at a party", "after a long week", "when bored",
+      "in cold weather", "in summer", "at a restaurant", "on a commute", "at school",
+      "during chores", "on a rainy day", "at a hotel", "while traveling", "at the store",
+      "before bed", "after work", "on a road trip", "at a gathering", "when stressed"
+    ];
 
-    REAL_LIFE_PROMPTS.forEach((p, idx) => {
-      for (const [ans, pop] of p.answers) {
-        const clean = ans.trim().toLowerCase();
-        ALL_KNOWN_PHRASES.push(clean);
-        if (!PROMPT_ITEM_MAP.has(clean)) PROMPT_ITEM_MAP.set(clean, new Set());
-        PROMPT_ITEM_MAP.get(clean).add(idx);
+    const SUB_FILTERS = [
+      { label: "everyday", pred: ([, p]) => p >= 0.45 },
+      { label: "less obvious", pred: ([, p]) => p < 0.65 },
+      { label: "deep-cut", pred: ([, p]) => p <= 0.38 },
+      { label: "single-word", pred: ([n]) => !n.includes(" ") },
+      { label: "multi-word", pred: ([n]) => n.includes(" ") }
+    ];
+
+    function buildThousandPrompts() {
+      const prompts = [];
+      const seen = new Set();
+
+      // 1. Base real-life prompts
+      for (const bp of PROMPT_BLUEPRINTS) {
+        const baseList = BANKS[bp.bank];
+        for (const tpl of bp.templates) {
+          const key = `${bp.cat}|${tpl}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            prompts.push({
+              category: bp.cat,
+              question: tpl,
+              bankName: bp.bank,
+              answers: baseList
+            });
+          }
+        }
       }
-    });
 
-    const UNIQUE_KNOWN_PHRASES = Array.from(new Set(ALL_KNOWN_PHRASES));
+      // 2. Expand with contextual variations & sub-criteria to reach 1,000+ distinct prompts
+      let cIdx = 0;
+      while (prompts.length < 1020) {
+        const bp = PROMPT_BLUEPRINTS[prompts.length % PROMPT_BLUEPRINTS.length];
+        const baseList = BANKS[bp.bank];
+        const ctx = CONTEXT_TAGS[cIdx % CONTEXT_TAGS.length];
+        const sub = SUB_FILTERS[(prompts.length + cIdx) % SUB_FILTERS.length];
+        cIdx++;
 
-    document.getElementById("prompt-count").textContent = `Prompts: ${REAL_LIFE_PROMPTS.length} Real-Life Topics`;
+        const filtered = baseList.filter(sub.pred);
+        const usableAnswers = filtered.length >= 3 ? filtered : baseList;
+
+        const baseQ = bp.templates[prompts.length % bp.templates.length];
+        const question = `${baseQ} (${ctx}, ${sub.label})`;
+        const key = `${bp.cat}|${question}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          prompts.push({
+            category: bp.cat,
+            question,
+            bankName: bp.bank,
+            answers: usableAnswers
+          });
+        }
+      }
+
+      return prompts;
+    }
+
+    const ALL_PROMPTS = buildThousandPrompts();
+    document.getElementById("prompt-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()} Real-Life`;
+
+    // Build global vocabulary for "Did you mean?" suggestions & cross-bank mismatch checks
+    const ALL_BANK_ITEMS = new Map(); // normalized answer -> Set of bankNames
+    const UNIQUE_KNOWN_WORDS = new Set();
+
+    for (const [bankName, list] of Object.entries(BANKS)) {
+      for (const [ans] of list) {
+        const clean = ans.trim().toLowerCase().replace(/\s+/g, " ");
+        UNIQUE_KNOWN_WORDS.add(clean);
+        if (!ALL_BANK_ITEMS.has(clean)) ALL_BANK_ITEMS.set(clean, new Set());
+        ALL_BANK_ITEMS.get(clean).add(bankName);
+      }
+    }
+
+    const KNOWN_LIST = Array.from(UNIQUE_KNOWN_WORDS);
 
     (function spawnEffects() {
       const box = document.getElementById("bubbles");
@@ -726,7 +874,10 @@
       }
     })();
 
-    // Levenshtein distance for close-word detection
+    function norm(s) {
+      return s.trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
     function editDistance(a, b) {
       if (a === b) return 0;
       const m = a.length;
@@ -751,21 +902,20 @@
 
     function findClosestSuggestion(rawInput, curPrompt) {
       const clean = norm(rawInput);
-      if (!clean || clean.length < 3) return null;
+      if (!clean || clean.length < 2) return null;
 
-      // Prioritize answers from the current prompt first, then all known words
       const promptCandidates = curPrompt.answers.map(([a]) => norm(a));
-      const pool = Array.from(new Set([...promptCandidates, ...UNIQUE_KNOWN_PHRASES]));
+      const pool = Array.from(new Set([...promptCandidates, ...KNOWN_LIST]));
 
       let bestWord = null;
-      let bestScore = Infinity;
+      let bestDist = Infinity;
 
       for (const candidate of pool) {
         if (candidate === clean) continue;
         const dist = editDistance(clean, candidate);
-        const maxAllowed = candidate.length <= 5 ? 1 : candidate.length <= 9 ? 2 : 3;
-        if (dist <= maxAllowed && dist < bestScore) {
-          bestScore = dist;
+        const maxAllowed = candidate.length <= 4 ? 1 : candidate.length <= 8 ? 2 : 3;
+        if (dist <= maxAllowed && dist < bestDist) {
+          bestDist = dist;
           bestWord = candidate;
         }
       }
@@ -773,38 +923,70 @@
       return bestWord;
     }
 
-    const dictCache = new Map();
+    function singularOrPluralVariants(word) {
+      const set = new Set([word]);
+      if (word.endsWith("ies") && word.length > 4) set.add(word.slice(0, -3) + "y");
+      if (word.endsWith("es") && word.length > 3) set.add(word.slice(0, -2));
+      if (word.endsWith("s") && word.length > 2) set.add(word.slice(0, -1));
+      else set.add(word + "s");
+      return Array.from(set);
+    }
 
-    async function checkDictionaryPhrase(phrase) {
-      const clean = phrase.trim().toLowerCase().replace(/\s+/g, " ");
-      if (!/^[a-z]+([ '-][a-z]+)*$/i.test(clean)) return false;
+    // Strict marking: only accepts answers that genuinely match this prompt's real-life answer pool
+    // (exact match, singular/plural variant, or exact word/phrase match inside this prompt's list).
+    // Random dictionary words that don't fit the prompt are rejected without wasting the turn.
+    function evaluateStrictAnswer(curPrompt, raw) {
+      const cleaned = raw.trim();
+      const n = norm(cleaned);
+      if (!n) {
+        return { ok: false, reason: "Type an answer first — your turn still counts!" };
+      }
 
-      const words = clean.split(/[\s-]+/).filter(Boolean);
-      if (words.length === 0) return false;
+      const variants = singularOrPluralVariants(n);
 
-      // Require every non-trivial word in a phrase to be a real English word
-      for (const token of words) {
-        if (token.length === 1 && token !== "a" && token !== "i") return false;
-        if (dictCache.has(token)) {
-          if (!dictCache.get(token)) return false;
-          continue;
-        }
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 2400);
-          const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(token)}`, {
-            signal: controller.signal
-          });
-          clearTimeout(timer);
-          dictCache.set(token, res.ok);
-          if (!res.ok) return false;
-        } catch {
-          if (!/^[a-z]{2,}$/i.test(token)) return false;
-          dictCache.set(token, true);
+      for (const [ans, pop] of curPrompt.answers) {
+        const target = norm(ans);
+        const targetVariants = singularOrPluralVariants(target);
+
+        const isMatch =
+          variants.some((v) => targetVariants.includes(v)) ||
+          (n.length >= 4 && target.split(" ").includes(n));
+
+        if (isMatch) {
+          // Check if prompt asks for single-word or multi-word specifically
+          if (curPrompt.question.includes("single-word") && n.includes(" ")) {
+            return {
+              ok: false,
+              reason: `"${cleaned}" has more than one word — try a single word (turn kept)!`,
+              suggestion: findClosestSuggestion(cleaned, curPrompt)
+            };
+          }
+          if (curPrompt.question.includes("multi-word") && !n.includes(" ")) {
+            return {
+              ok: false,
+              reason: `"${cleaned}" is only one word — try a multi-word answer (turn kept)!`,
+              suggestion: findClosestSuggestion(cleaned, curPrompt)
+            };
+          }
+          return { ok: true, pop };
         }
       }
 
-      return true;
+      // Check if it belongs to another prompt's bank
+      const otherBanks = ALL_BANK_ITEMS.get(n);
+      if (otherBanks && !otherBanks.has(curPrompt.bankName)) {
+        return {
+          ok: false,
+          reason: `"${cleaned}" doesn't fit this prompt's criteria — try again (turn kept)!`,
+          suggestion: findClosestSuggestion(cleaned, curPrompt)
+        };
+      }
+
+      return {
+        ok: false,
+        reason: `"${cleaned}" isn't a valid match for this prompt — try again (turn kept)!`,
+        suggestion: findClosestSuggestion(cleaned, curPrompt)
+      };
     }
 
     function pointsFromRarity(pop) {
@@ -826,17 +1008,6 @@
       return "Plankton";
     }
 
-    function rarityFromPhrase(text) {
-      const letters = text.trim().replace(/[^a-zA-Z]/g, "").toLowerCase();
-      const uncommon = new Set(["q", "x", "z", "j", "k", "v", "w", "y"]);
-      let rareChars = 0;
-      for (const c of letters) if (uncommon.has(c)) rareChars++;
-      const isPhrase = text.trim().split(/\s+/).length >= 2 ? 0.12 : 0;
-      const lenBoost = Math.min(0.45, Math.max(0, (letters.length - 4) * 0.05));
-      const charBoost = Math.min(0.35, rareChars * 0.15);
-      return Math.max(0.08, Math.min(0.85, 0.74 - lenBoost - charBoost - isPhrase));
-    }
-
     function hashSeed(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -848,7 +1019,7 @@
 
     function pickSeven(seedStr) {
       let s = hashSeed(seedStr) || 1;
-      const pool = REAL_LIFE_PROMPTS.map((p, idx) => ({ ...p, idx }));
+      const pool = [...ALL_PROMPTS];
       const selected = [];
       while (selected.length < 7 && pool.length > 0) {
         s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
@@ -890,22 +1061,6 @@
     const resultsAreaEl = document.getElementById("results-area");
     const krillDiverEl = document.getElementById("krill-diver");
     const railBoxEl = document.querySelector(".depth-rail-box");
-
-    function norm(s) {
-      return s.trim().toLowerCase().replace(/\s+/g, " ");
-    }
-
-    function matchPromptAnswers(cur, raw) {
-      const n = norm(raw);
-      if (!n) return null;
-      for (const [ans, pop] of cur.answers) {
-        const cleanAns = norm(ans);
-        if (cleanAns === n) return { pop };
-        const alt = n.endsWith("s") ? n.slice(0, -1) : `${n}s`;
-        if (cleanAns === alt) return { pop: Math.min(0.95, pop + 0.04) };
-      }
-      return null;
-    }
 
     function showSuggestion(word) {
       if (!word) {
@@ -1037,50 +1192,7 @@
       }, 1000);
     }
 
-    async function validateGuess(cur, raw) {
-      const cleaned = raw.trim();
-      const n = norm(cleaned);
-      if (!n) {
-        return { ok: false, reason: "Type an answer first — your turn still counts!" };
-      }
-
-      // 1. Direct match on this prompt's curated real-life list
-      const direct = matchPromptAnswers(cur, cleaned);
-      if (direct) {
-        return { ok: true, pop: direct.pop, extra: "" };
-      }
-
-      // 2. Check if it's a valid English word/phrase
-      const inDict = await checkDictionaryPhrase(cleaned);
-      if (!inDict) {
-        const close = findClosestSuggestion(cleaned, cur);
-        return {
-          ok: false,
-          reason: `"${cleaned}" isn't recognized in the English dictionary — try again (turn kept)!`,
-          suggestion: close
-        };
-      }
-
-      // 3. Check if it clearly belongs to a completely different prompt instead of this one
-      const mappedPrompts = PROMPT_ITEM_MAP.get(n);
-      if (mappedPrompts && !mappedPrompts.has(cur.idx)) {
-        const close = findClosestSuggestion(cleaned, cur);
-        return {
-          ok: false,
-          reason: `"${cleaned}" doesn't fit this prompt — try again (turn kept)!`,
-          suggestion: close
-        };
-      }
-
-      // 4. Valid English word/phrase that fits the real-life prompt
-      return {
-        ok: true,
-        pop: rarityFromPhrase(cleaned),
-        extra: " · Valid English match"
-      };
-    }
-
-    async function handleGuess(raw, timedOut = false) {
+    function handleGuess(raw, timedOut = false) {
       if (busy) return;
       busy = true;
       inputEl.disabled = true;
@@ -1099,11 +1211,10 @@
         return;
       }
 
-      msgEl.innerHTML = `<span class="warn">Checking answer...</span>`;
-      const res = await validateGuess(cur, cleaned);
+      const res = evaluateStrictAnswer(cur, cleaned);
 
       if (!res.ok) {
-        // Do NOT count as a go — keep the current round and timer active!
+        // Invalid answer does NOT count as a go — keep round and timer running!
         busy = false;
         inputEl.disabled = false;
         btnEl.disabled = false;
@@ -1114,14 +1225,13 @@
         return;
       }
 
-      // Valid answer — advance round and plunge!
       clearInterval(countdown);
       const pts = pointsFromRarity(res.pop);
       const tier = tierNameForPoints(pts);
       const cls = pts >= 32 ? "ok" : "warn";
       const dropMeters = pts * METERS_PER_POINT;
 
-      msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.extra} — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
+      msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong> — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
 
       score += pts;
       descendOcean(score * METERS_PER_POINT, pts);
