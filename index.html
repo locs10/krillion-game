@@ -501,7 +501,6 @@
       }
     })();
 
-    // Core real-life answer banks used to generate 1,000+ relatable Krillion-style prompts
     const BANKS = {
       junkDrawer: [
         ["batteries", 0.94], ["scissors", 0.90], ["tape", 0.88], ["rubber bands", 0.85], ["pens", 0.86],
@@ -643,119 +642,119 @@
     };
 
     const PROMPT_BLUEPRINTS = [
-      { cat: "Everyday Life", bank: "junkDrawer", templates: [
+      { cat: "Everyday Life", bank: "junkDrawer", keywords: ["drawer", "junk", "kitchen", "tool", "small", "tape", "key", "battery"], templates: [
         "Something you find in a kitchen junk drawer",
         "Something rattling around in a junk drawer",
         "Something you haven't used in years from a junk drawer",
         "Something tangled in a drawer at home",
         "Something small you keep in a drawer just in case"
       ]},
-      { cat: "Social Habits", bank: "lateExcuses", templates: [
+      { cat: "Social Habits", bank: "lateExcuses", keywords: ["late", "excuse", "traffic", "sleep", "alarm", "car", "train", "bus", "sick"], templates: [
         "An excuse for being late to work or plans",
         "Something people blame when they show up late",
         "An excuse for missing a morning meeting",
         "Something people say when running behind schedule",
         "A classic excuse for arriving late to a hangout"
       ]},
-      { cat: "Modern Life", bank: "pretendUnderstand", templates: [
+      { cat: "Modern Life", bank: "pretendUnderstand", keywords: ["understand", "finance", "money", "tech", "science", "wine", "art", "law"], templates: [
         "Something people pretend to understand",
         "A topic people nod along to without really getting it",
         "Something adults claim they understand completely",
         "A complex thing people pretend to know about",
         "Something people act like experts on at parties"
       ]},
-      { cat: "Everyday Life", bank: "lostOften", templates: [
+      { cat: "Everyday Life", bank: "lostOften", keywords: ["lose", "lost", "misplace", "keys", "phone", "wallet", "sock", "remote"], templates: [
         "Something you lose all the time",
         "Something you constantly misplace around the house",
         "Something you always have to search for before leaving",
         "Something that mysteriously disappears every week",
         "Something people leave behind and forget"
       ]},
-      { cat: "Food & Drink", bank: "pizzaToppings", templates: [
+      { cat: "Food & Drink", bank: "pizzaToppings", keywords: ["pizza", "topping", "cheese", "meat", "veggie", "fruit", "sauce"], templates: [
         "A controversial pizza topping",
         "A pizza topping people argue about",
         "Something people put on pizza that divides opinions",
         "A surprising topping on a pizza",
         "A pizza topping some people love and others hate"
       ]},
-      { cat: "Travel & Hotels", bank: "hotelBreakfast", templates: [
+      { cat: "Travel & Hotels", bank: "hotelBreakfast", keywords: ["hotel", "breakfast", "buffet", "egg", "bacon", "toast", "coffee", "juice"], templates: [
         "Something you see at a hotel breakfast buffet",
         "Something on a hotel morning buffet table",
         "Something people grab at a free hotel breakfast",
         "A classic hotel breakfast item",
         "Something sitting in a warming tray at a hotel breakfast"
       ]},
-      { cat: "Pet Peeves", bank: "annoyingSounds", templates: [
+      { cat: "Pet Peeves", bank: "annoyingSounds", keywords: ["sound", "noise", "loud", "chew", "alarm", "siren", "buzz", "beep"], templates: [
         "A sound that immediately annoys people",
         "An irritating noise in a quiet room",
         "A sound that gets on people's nerves",
         "A grating sound nobody likes hearing",
         "A noise that ruins focus instantly"
       ]},
-      { cat: "Human Nature", bank: "harmlessLies", templates: [
+      { cat: "Human Nature", bank: "harmlessLies", keywords: ["lie", "fib", "excuse", "fine", "way", "busy", "sorry", "forgot"], templates: [
         "A harmless lie almost everyone tells",
         "A white lie people tell to be polite",
         "Something people say when they aren't being totally honest",
         "A common excuse or white lie in everyday life",
         "A casual fib people tell all the time"
       ]},
-      { cat: "Weekend & Leisure", bank: "beachItems", templates: [
+      { cat: "Weekend & Leisure", bank: "beachItems", keywords: ["beach", "sand", "sun", "swim", "water", "towel", "cooler"], templates: [
         "Something people bring to the beach",
         "Something you pack for a sunny beach day",
         "Something covered in sand after a beach trip",
         "A beach bag essential",
         "Something people set up on the sand"
       ]},
-      { cat: "Childhood & School", bank: "classroomItems", templates: [
+      { cat: "Childhood & School", bank: "classroomItems", keywords: ["school", "class", "classroom", "teacher", "desk", "pen", "pencil", "book"], templates: [
         "Something you remember from school classrooms",
         "Something sitting on a teacher's desk or classroom wall",
         "A classic school classroom object",
         "Something students use in class every day",
         "Something inside a school locker or desk"
       ]},
-      { cat: "Home & Chores", bank: "putOffChores", templates: [
+      { cat: "Home & Chores", bank: "putOffChores", keywords: ["chore", "clean", "wash", "dish", "laundry", "mop", "sweep", "yard"], templates: [
         "A household chore people put off doing",
         "A chore everyone delays until the weekend",
         "A boring task around the house nobody wants to do",
         "A chore people procrastinate on",
         "Something on the to-do list that gets ignored"
       ]},
-      { cat: "Pop Culture & Movies", bank: "movieTropes", templates: [
+      { cat: "Pop Culture & Movies", bank: "movieTropes", keywords: ["movie", "film", "trope", "cliche", "scene", "villain", "hero", "chase"], templates: [
         "A classic movie trope or cliché",
         "Something that happens in movies that rarely happens in real life",
         "A predictable action or horror movie cliché",
         "A trope you see in films all the time",
         "Something Hollywood does in almost every movie"
       ]},
-      { cat: "Health & Body", bank: "doctorQuestions", templates: [
+      { cat: "Health & Body", bank: "doctorQuestions", keywords: ["doctor", "dentist", "health", "pain", "sleep", "floss", "medicine", "checkup"], templates: [
         "Something a doctor or dentist always asks you",
         "A routine question at a checkup or dentist visit",
         "Something a clinic asks before an appointment",
         "A question you expect at the doctor's office",
         "Something a dentist asks while holding tools"
       ]},
-      { cat: "Money & Shopping", bank: "impulseBuys", templates: [
+      { cat: "Money & Shopping", bank: "impulseBuys", keywords: ["buy", "checkout", "store", "candy", "gum", "snack", "drink", "magazine"], templates: [
         "An impulse buy at the grocery store checkout",
         "Something you toss in the cart while waiting in line",
         "A small impulse purchase by the register",
         "Something tempting near the checkout counter",
         "A quick buy you grab while checking out"
       ]},
-      { cat: "Travel & Hotels", bank: "roadTrip", templates: [
+      { cat: "Travel & Hotels", bank: "roadTrip", keywords: ["road", "trip", "drive", "car", "snack", "music", "map", "charger"], templates: [
         "Something essential for a long road trip",
         "Something you keep nearby on a long drive",
         "Something people pack for hours on the highway",
         "A road trip staple in the car",
         "Something that saves a long car ride"
       ]},
-      { cat: "Food & Drink", bank: "coldFoodBetter", templates: [
+      { cat: "Food & Drink", bank: "coldFoodBetter", keywords: ["cold", "fridge", "food", "eat", "snack", "sweet", "leftover"], templates: [
         "A food that is surprisingly good cold",
         "Something people eat straight from the fridge",
         "A leftover food that works cold",
         "Something refreshing straight out of the fridge",
         "A food people eat cold even if it's usually warm"
       ]},
-      { cat: "Money & Shopping", bank: "onlineRegrets", templates: [
+      { cat: "Money & Shopping", bank: "onlineRegrets", keywords: ["online", "shop", "order", "regret", "buy", "gadget", "clothes", "app"], templates: [
         "Something people impulse-buy online and regret",
         "An online shopping purchase that doesn't live up to the hype",
         "Something bought late at night online",
@@ -785,7 +784,6 @@
       const prompts = [];
       const seen = new Set();
 
-      // 1. Base real-life prompts
       for (const bp of PROMPT_BLUEPRINTS) {
         const baseList = BANKS[bp.bank];
         for (const tpl of bp.templates) {
@@ -796,13 +794,13 @@
               category: bp.cat,
               question: tpl,
               bankName: bp.bank,
+              keywords: bp.keywords,
               answers: baseList
             });
           }
         }
       }
 
-      // 2. Expand with contextual variations & sub-criteria to reach 1,000+ distinct prompts
       let cIdx = 0;
       while (prompts.length < 1020) {
         const bp = PROMPT_BLUEPRINTS[prompts.length % PROMPT_BLUEPRINTS.length];
@@ -823,6 +821,7 @@
             category: bp.cat,
             question,
             bankName: bp.bank,
+            keywords: bp.keywords,
             answers: usableAnswers
           });
         }
@@ -834,8 +833,7 @@
     const ALL_PROMPTS = buildThousandPrompts();
     document.getElementById("prompt-count").textContent = `Prompts: ${ALL_PROMPTS.length.toLocaleString()} Real-Life`;
 
-    // Build global vocabulary for "Did you mean?" suggestions & cross-bank mismatch checks
-    const ALL_BANK_ITEMS = new Map(); // normalized answer -> Set of bankNames
+    const ALL_BANK_ITEMS = new Map();
     const UNIQUE_KNOWN_WORDS = new Set();
 
     for (const [bankName, list] of Object.entries(BANKS)) {
@@ -932,59 +930,143 @@
       return Array.from(set);
     }
 
-    // Strict marking: only accepts answers that genuinely match this prompt's real-life answer pool
-    // (exact match, singular/plural variant, or exact word/phrase match inside this prompt's list).
-    // Random dictionary words that don't fit the prompt are rejected without wasting the turn.
-    function evaluateStrictAnswer(curPrompt, raw) {
+    const dictCache = new Map();
+
+    async function checkDictionaryWordOrPhrase(phrase) {
+      const clean = norm(phrase);
+      if (!/^[a-z']+([ '-][a-z']+)*$/i.test(clean)) return false;
+
+      const words = clean.split(/[\s-]+/).filter(Boolean);
+      if (words.length === 0) return false;
+
+      // Require every token to be a real English word
+      for (const token of words) {
+        const bare = token.replace(/'s$/i, "").replace(/'$/i, "");
+        if (!bare) continue;
+        if (bare.length === 1 && bare !== "a" && bare !== "i") return false;
+        if (dictCache.has(bare)) {
+          if (!dictCache.get(bare)) return false;
+          continue;
+        }
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 2200);
+          const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(bare)}`, {
+            signal: controller.signal
+          });
+          clearTimeout(timer);
+          dictCache.set(bare, res.ok);
+          if (!res.ok) return false;
+        } catch {
+          // Reject obvious keyboard mash/gibberish if offline/timed out
+          const looksLikeRealWord = /^[a-z]{2,18}$/i.test(bare) && /[aeiouy]/i.test(bare) && !/[^aeiouy]{5,}/i.test(bare);
+          dictCache.set(bare, looksLikeRealWord);
+          if (!looksLikeRealWord) return false;
+        }
+      }
+
+      return true;
+    }
+
+    function matchesWordLengthConstraint(question, guess) {
+      const isSingle = question.includes("single-word");
+      const isMulti = question.includes("multi-word");
+      const wordCount = norm(guess).split(" ").filter(Boolean).length;
+      if (isSingle && wordCount !== 1) {
+        return { ok: false, reason: `"${guess.trim()}" isn't a single word — try again (turn kept)!` };
+      }
+      if (isMulti && wordCount < 2) {
+        return { ok: false, reason: `"${guess.trim()}" needs to be a multi-word answer — try again (turn kept)!` };
+      }
+      return { ok: true };
+    }
+
+    // Balanced marking:
+    // 1) Exact / plural match in current prompt's answers -> accepted
+    // 2) Partial / sub-phrase match with current prompt's answers -> accepted
+    // 3) Valid English word that is NOT a known answer for another prompt AND relates to the prompt's topic/keywords -> accepted
+    // 4) Unrelated dictionary words or answers from other topics -> rejected without losing turn, with suggestion if close
+    async function evaluateBalancedAnswer(curPrompt, raw) {
       const cleaned = raw.trim();
       const n = norm(cleaned);
       if (!n) {
         return { ok: false, reason: "Type an answer first — your turn still counts!" };
       }
 
-      const variants = singularOrPluralVariants(n);
-
-      for (const [ans, pop] of curPrompt.answers) {
-        const target = norm(ans);
-        const targetVariants = singularOrPluralVariants(target);
-
-        const isMatch =
-          variants.some((v) => targetVariants.includes(v)) ||
-          (n.length >= 4 && target.split(" ").includes(n));
-
-        if (isMatch) {
-          // Check if prompt asks for single-word or multi-word specifically
-          if (curPrompt.question.includes("single-word") && n.includes(" ")) {
-            return {
-              ok: false,
-              reason: `"${cleaned}" has more than one word — try a single word (turn kept)!`,
-              suggestion: findClosestSuggestion(cleaned, curPrompt)
-            };
-          }
-          if (curPrompt.question.includes("multi-word") && !n.includes(" ")) {
-            return {
-              ok: false,
-              reason: `"${cleaned}" is only one word — try a multi-word answer (turn kept)!`,
-              suggestion: findClosestSuggestion(cleaned, curPrompt)
-            };
-          }
-          return { ok: true, pop };
-        }
-      }
-
-      // Check if it belongs to another prompt's bank
-      const otherBanks = ALL_BANK_ITEMS.get(n);
-      if (otherBanks && !otherBanks.has(curPrompt.bankName)) {
+      const lenCheck = matchesWordLengthConstraint(curPrompt.question, cleaned);
+      if (!lenCheck.ok) {
         return {
           ok: false,
-          reason: `"${cleaned}" doesn't fit this prompt's criteria — try again (turn kept)!`,
+          reason: lenCheck.reason,
           suggestion: findClosestSuggestion(cleaned, curPrompt)
         };
       }
 
+      const guessVariants = singularOrPluralVariants(n);
+
+      // 1. Direct or singular/plural match in current prompt
+      for (const [ans, pop] of curPrompt.answers) {
+        const target = norm(ans);
+        const targetVariants = singularOrPluralVariants(target);
+        if (guessVariants.some((v) => targetVariants.includes(v))) {
+          return { ok: true, pop, note: "" };
+        }
+      }
+
+      // 2. Partial / sub-phrase match against current prompt's answers
+      for (const [ans, pop] of curPrompt.answers) {
+        const target = norm(ans);
+        const targetTokens = target.split(" ");
+        const guessTokens = n.split(" ");
+        const sharedToken = guessTokens.some((gt) =>
+          singularOrPluralVariants(gt).some((gv) => targetTokens.includes(gv))
+        );
+        const substringMatch =
+          (n.length >= 3 && target.includes(n)) ||
+          (target.length >= 3 && n.includes(target));
+
+        if (sharedToken || substringMatch) {
+          return { ok: true, pop: Math.min(0.58, pop), note: " · Related match" };
+        }
+      }
+
+      // 3. Reject if it belongs to another prompt's bank
+      const otherBanks = ALL_BANK_ITEMS.get(n);
+      if (otherBanks && !otherBanks.has(curPrompt.bankName)) {
+        return {
+          ok: false,
+          reason: `"${cleaned}" fits a different prompt, not this one — try again (turn kept)!`,
+          suggestion: findClosestSuggestion(cleaned, curPrompt)
+        };
+      }
+
+      // 4. Check English dictionary + topic keyword relevance so random dictionary words are still filtered out
+      const isEnglish = await checkDictionaryWordOrPhrase(cleaned);
+      if (!isEnglish) {
+        return {
+          ok: false,
+          reason: `"${cleaned}" isn't a valid English word or phrase — try again (turn kept)!`,
+          suggestion: findClosestSuggestion(cleaned, curPrompt)
+        };
+      }
+
+      const qLower = curPrompt.question.toLowerCase();
+      const topicWords = new Set([
+        ...(curPrompt.keywords || []),
+        ...qLower.replace(/[^a-z\s]/g, " ").split(/\s+/).filter((w) => w.length >= 4)
+      ]);
+
+      const fitsTopic = guessVariants.some((gv) =>
+        Array.from(topicWords).some((kw) => kw.startsWith(gv) || gv.startsWith(kw))
+      );
+
+      if (fitsTopic) {
+        return { ok: true, pop: 0.42, note: " · Topic match" };
+      }
+
       return {
         ok: false,
-        reason: `"${cleaned}" isn't a valid match for this prompt — try again (turn kept)!`,
+        reason: `"${cleaned}" doesn't clearly match this prompt — try again (turn kept)!`,
         suggestion: findClosestSuggestion(cleaned, curPrompt)
       };
     }
@@ -1192,7 +1274,7 @@
       }, 1000);
     }
 
-    function handleGuess(raw, timedOut = false) {
+    async function handleGuess(raw, timedOut = false) {
       if (busy) return;
       busy = true;
       inputEl.disabled = true;
@@ -1211,10 +1293,10 @@
         return;
       }
 
-      const res = evaluateStrictAnswer(cur, cleaned);
+      msgEl.innerHTML = `<span class="warn">Checking answer...</span>`;
+      const res = await evaluateBalancedAnswer(cur, cleaned);
 
       if (!res.ok) {
-        // Invalid answer does NOT count as a go — keep round and timer running!
         busy = false;
         inputEl.disabled = false;
         btnEl.disabled = false;
@@ -1231,7 +1313,7 @@
       const cls = pts >= 32 ? "ok" : "warn";
       const dropMeters = pts * METERS_PER_POINT;
 
-      msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong> — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
+      msgEl.innerHTML = `<span class="${cls}"><strong>"${cleaned}"</strong>${res.note} — <strong>${tier}</strong> (+${pts} pts / -${dropMeters.toLocaleString()}m)</span>`;
 
       score += pts;
       descendOcean(score * METERS_PER_POINT, pts);
@@ -1272,4 +1354,3 @@
   </script>
 </body>
 </html>
-
